@@ -1,4 +1,4 @@
-package spring.learn.reservations;
+package spring.reservations;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
