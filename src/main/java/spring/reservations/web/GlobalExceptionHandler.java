@@ -1,4 +1,4 @@
-package spring.reservations;
+package spring.reservations.web;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -45,13 +45,13 @@ public class GlobalExceptionHandler {
                 .body(errorDto);
     }
 
-    @ExceptionHandler(exception = {
+    @ExceptionHandler({
             IllegalArgumentException.class,
             IllegalStateException.class,
             MethodArgumentNotValidException.class
     })
-    public ResponseEntity<ErrorResponseDataTransferObject> handleBadRequest(IllegalArgumentException e) {
-        log.error("Handle entityNotFoundException", e);
+    public ResponseEntity<ErrorResponseDataTransferObject> handleBadRequest(Exception e) {
+        log.error("Handle bad request exception", e);
 
         var errorDto = new ErrorResponseDataTransferObject(
                 "Bad request",

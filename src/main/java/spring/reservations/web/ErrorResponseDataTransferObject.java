@@ -1,4 +1,4 @@
-package spring.reservations;
+package spring.reservations.web;
 
 import java.time.LocalDateTime;
 

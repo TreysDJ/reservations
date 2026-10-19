@@ -1,4 +1,4 @@
-package spring.reservations;
+package spring.reservations.reservations;
 
 public enum ReservationStatus {
     PENDING,

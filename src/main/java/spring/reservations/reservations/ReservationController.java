@@ -1,4 +1,4 @@
-package spring.reservations;
+package spring.reservations.reservations;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -21,17 +21,27 @@ public class ReservationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable("id") Long id) {
-        log.info("Called getReservationById: " + id);
+        log.info("Called getReservationById: {}", id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(reservationService.getReservationById(id));
     }
 
     @GetMapping()
-    public ResponseEntity<List<Reservation>> getAllReservations() {
+    public ResponseEntity<List<Reservation>> getAllReservations(
+            @RequestParam(name = "roomId", required = false) Long roomId,
+            @RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "pageSize", required = false) Integer pageSize,
+            @RequestParam(name = "pageNumber", required = false) Integer pageNumber
+    ) {
         log.info("Called getAllReservations");
-        return ResponseEntity.ok(reservationService.findAllReservations());
-
+        var filter = new ReservationsFindFilter(
+                roomId,
+                userId,
+                pageSize,
+                pageNumber
+        );
+        return ResponseEntity.ok(reservationService.findAllByFilter(filter));
     }
 
     @PostMapping()
@@ -40,9 +50,7 @@ public class ReservationController {
     ) {
         log.info("Called createReservation");
         return ResponseEntity.status(201)
-                .header("test-header", "123")
                 .body(reservationService.createReservation(reservationToCreate));
-//        return reservationService.createReservation(reservationToCreate);
     }
 
     @PutMapping("/{id}")

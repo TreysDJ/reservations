@@ -1,4 +1,4 @@
-package spring.reservations;
+package spring.reservations.reservations;
 
 import jakarta.persistence.*;
 
