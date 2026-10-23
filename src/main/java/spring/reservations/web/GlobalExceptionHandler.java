@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDataTransferObject> handleGenericException(Exception e) {
         log.error("Handle exception", e);
 
-        var errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
                 "Internal server error",
                 e.getMessage(),
                 LocalDateTime.now()
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDataTransferObject> handleEntityNotFoundException(EntityNotFoundException e) {
         log.error("Handle entityNotFoundException", e);
 
-        var errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
                 "Entity not found",
                 e.getMessage(),
                 LocalDateTime.now()
@@ -53,11 +53,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDataTransferObject> handleBadRequest(Exception e) {
         log.error("Handle bad request exception", e);
 
-        var errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
                 "Bad request",
                 e.getMessage(),
                 LocalDateTime.now()
         );
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorDto);

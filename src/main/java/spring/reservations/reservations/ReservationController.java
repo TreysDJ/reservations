@@ -1,6 +1,7 @@
 package spring.reservations.reservations;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,18 @@ import java.util.List;
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
+    private final ReservationValidator reservationValidator;
     private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
 
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(@NotNull ReservationService reservationService,
+                                 @NotNull ReservationValidator reservationValidator
+    ) {
         this.reservationService = reservationService;
+        this.reservationValidator = reservationValidator;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable("id") Long id) {
+    public ResponseEntity<Reservation> getReservationById(@NotNull @PathVariable("id") Long id) {
         log.info("Called getReservationById: {}", id);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -35,7 +40,7 @@ public class ReservationController {
             @RequestParam(name = "pageNumber", required = false) Integer pageNumber
     ) {
         log.info("Called getAllReservations");
-        var filter = new ReservationsFindFilter(
+        ReservationsFindFilter filter = new ReservationsFindFilter(
                 roomId,
                 userId,
                 pageSize,
@@ -46,8 +51,9 @@ public class ReservationController {
 
     @PostMapping()
     public ResponseEntity<Reservation> createReservation(
-            @RequestBody @Valid Reservation reservationToCreate
+            @RequestBody Reservation reservationToCreate
     ) {
+        reservationValidator.validate(reservationToCreate);
         log.info("Called createReservation");
         return ResponseEntity.status(201)
                 .body(reservationService.createReservation(reservationToCreate));
@@ -59,7 +65,7 @@ public class ReservationController {
             @RequestBody @Valid Reservation reservationToUpdate
     ) {
         log.info("Called updateReservation id={}, reservationToUpdate={}", id, reservationToUpdate);
-        var updated = reservationService.updateReservation(id, reservationToUpdate);
+        Reservation updated = reservationService.updateReservation(id, reservationToUpdate);
         return ResponseEntity.ok(updated);
     }
 
@@ -77,7 +83,7 @@ public class ReservationController {
             @PathVariable("id") Long id
     ) {
         log.info("Called approveReservation: id={}", id);
-        var reservation = reservationService.approveReservation(id);
+        Reservation reservation = reservationService.approveReservation(id);
         return ResponseEntity.ok(reservation);
     }
 }

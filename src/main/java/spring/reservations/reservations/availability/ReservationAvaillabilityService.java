@@ -1,5 +1,6 @@
 package spring.reservations.reservations.availability;
 
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,17 +15,17 @@ public class ReservationAvaillabilityService {
     private final static Logger log = LoggerFactory.getLogger(ReservationAvaillabilityService.class);
     private final ReservationRepository repository;
 
-    public ReservationAvaillabilityService(ReservationRepository repository) {
+    public ReservationAvaillabilityService(@NotNull ReservationRepository repository) {
         this.repository = repository;
     }
 
     public boolean isReservationConflict(
-            Long roomId,
-            LocalDate startDate,
-            LocalDate endDate
+            @NotNull Long roomId,
+            @NotNull LocalDate startDate,
+            @NotNull LocalDate endDate
     ) {
         if (!endDate.isAfter(startDate)) {
-            throw new IllegalArgumentException("Start date must be earlier then end date");
+            throw new IllegalArgumentException("Start date must be earlier than end date");
         }
 
         List<Long> conflicting = repository.findConflictReservations(
