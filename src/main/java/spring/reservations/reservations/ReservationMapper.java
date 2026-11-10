@@ -1,9 +1,11 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReservationMapper {
+    @Nullable
     public Reservation toDomain(ReservationEntity reservation) {
         return new Reservation(
                 reservation.getId(),

@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Table(name = "reservations")
 @Entity
-
 public class ReservationEntity {
     @Id
     @Column(name = "id")

@@ -1,5 +1,7 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,11 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.reservations.reservations.availability.ReservationAvaillabilityService;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 public class ReservationService {
     private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
+
+    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static final int DEFAULT_PAGE_NUMBER = 0;
+
     private final ReservationRepository repository;
     private final ReservationAvaillabilityService availlabilityService;
     private final ReservationMapper mapper;
@@ -23,15 +29,16 @@ public class ReservationService {
     }
 
 
-    public Reservation getReservationById(Long id) {
+    @Nonnull
+    public Reservation getReservationById(@Nonnull Long id) {
         ReservationEntity reservationEntity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Not found reservation by id = " + id));
         return mapper.toDomain(reservationEntity);
     }
 
     public List<Reservation> findAllByFilter(ReservationsFindFilter filter) {
-        int pageSize = filter.pageSize() != null ? filter.pageSize() : 10;
-        int pageNumber = filter.pageNumber() != null ? filter.pageNumber() : 10;
+        int pageSize = filter.pageSize() != null ? filter.pageSize() : DEFAULT_PAGE_SIZE;
+        int pageNumber = filter.pageNumber() != null ? filter.pageNumber() : DEFAULT_PAGE_NUMBER;
 
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
 
@@ -72,7 +79,7 @@ public class ReservationService {
 
     public Reservation updateReservation(Long id, Reservation reservationToUpdate) {
         ReservationEntity reservationEntity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = "  + id));
+                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
 
         if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
             throw new IllegalStateException("Cannot modify reservation: status=" + reservationEntity.getStatus());
@@ -97,7 +104,7 @@ public class ReservationService {
         }
 
         ReservationEntity reservation = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = "  + id));
+                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
 
         if (reservation.getStatus().equals(ReservationStatus.APPROVED)) {
             throw new IllegalArgumentException("Cannot cancel reservation: status=APPROVED");
@@ -114,7 +121,7 @@ public class ReservationService {
 
     public Reservation approveReservation(Long id) {
         ReservationEntity reservationEntity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = "  + id));
+                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
 
         if (reservationEntity.getStatus() != ReservationStatus.APPROVED) {
             return mapper.toDomain(reservationEntity);

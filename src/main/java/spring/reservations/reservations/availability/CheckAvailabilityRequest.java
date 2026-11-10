@@ -1,14 +1,15 @@
 package spring.reservations.reservations.availability;
 
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public record CheckAvailabilityRequest(
-        @NotNull Long roomId,
+        @Nonnull Long roomId,
 
-         @NotNull LocalDate startDate,
+        @Nonnull LocalDate startDate,
 
-         @NotNull LocalDate endDate
+        @Nonnull LocalDate endDate
 ) {
 }

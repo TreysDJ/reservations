@@ -16,10 +16,10 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDataTransferObject> handleGenericException(Exception e) {
+    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception e) {
         log.error("Handle exception", e);
 
-        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Internal server error",
                 e.getMessage(),
                 LocalDateTime.now()
@@ -31,10 +31,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponseDataTransferObject> handleEntityNotFoundException(EntityNotFoundException e) {
+    public ResponseEntity<ErrorResponseDTO> handleEntityNotFoundException(EntityNotFoundException e) {
         log.error("Handle entityNotFoundException", e);
 
-        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Entity not found",
                 e.getMessage(),
                 LocalDateTime.now()
@@ -50,10 +50,10 @@ public class GlobalExceptionHandler {
             IllegalStateException.class,
             MethodArgumentNotValidException.class
     })
-    public ResponseEntity<ErrorResponseDataTransferObject> handleBadRequest(Exception e) {
+    public ResponseEntity<ErrorResponseDTO> handleBadRequest(Exception e) {
         log.error("Handle bad request exception", e);
 
-        ErrorResponseDataTransferObject errorDto = new ErrorResponseDataTransferObject(
+        ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Bad request",
                 e.getMessage(),
                 LocalDateTime.now()

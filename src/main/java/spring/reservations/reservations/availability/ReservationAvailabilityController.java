@@ -1,5 +1,6 @@
 package spring.reservations.reservations.availability;
 
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +15,13 @@ public class ReservationAvailabilityController {
     private final static Logger log = LoggerFactory.getLogger(ReservationAvailabilityController.class);
     private final ReservationAvaillabilityService service;
 
-    public ReservationAvailabilityController(@NotNull ReservationAvaillabilityService service) {
+    public ReservationAvailabilityController(@Nonnull ReservationAvaillabilityService service) {
         this.service = service;
     }
 
     @PostMapping("/check")
     public ResponseEntity<CheckAvailabilityResponse> checkAvailability(
-            @NotNull CheckAvailabilityRequest request
+            @Nonnull CheckAvailabilityRequest request
     ) {
         log.info("Called checkAvailability: request={}", request);
         service.isReservationConflict(

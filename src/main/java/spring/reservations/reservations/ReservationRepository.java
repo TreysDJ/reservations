@@ -33,10 +33,11 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     );
 
     @Query("""
-        SELECT r.id from ReservationEntity r
-        WHERE (:roomId IS NULL OR r.roomId = :roomId)
-        AND (:userId IS NULL OR r.userId = :userid)
-        """)
+            SELECT r from ReservationEntity r
+            WHERE (:roomId IS NULL OR r.roomId = :roomId)
+            AND (:userId IS NULL OR r.userId = :userId)
+            ORDER BY r.id ASC
+            """)
     List<ReservationEntity> findAllByFilter(
             @Param("roomId") Long roomId,
             @Param("userId") Long userId,
