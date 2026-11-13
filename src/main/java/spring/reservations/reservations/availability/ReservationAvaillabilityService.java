@@ -42,4 +42,29 @@ public class ReservationAvaillabilityService {
         log.info("Conflicting with: id={}", conflicting);
         return true;
     }
+
+    public boolean isReservationConflict(
+            @Nonnull Long roomId,
+            @Nonnull LocalDate startDate,
+            @Nonnull LocalDate endDate,
+            @Nonnull Long id
+    ) {
+        if (!endDate.isAfter(startDate)) {
+            throw new IllegalArgumentException("Start date must be earlier than end date");
+        }
+
+        List<Long> conflicting = repository.findConflictReservations(
+                roomId,
+                startDate,
+                endDate,
+                ReservationStatus.APPROVED,
+                id
+        );
+
+        if (conflicting.isEmpty()) {
+            return false;
+        }
+        log.info("Conflicting with: id={}", conflicting);
+        return true;
+    }
 }

@@ -1,5 +1,6 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -10,17 +11,17 @@ record Reservation (
         @Null
         Long id,
 
-        @NotNull
+        @Nonnull
         Long userId,
 
-        @NotNull
+        @Nonnull
         Long roomId,
 
-        @NotNull
+        @Nonnull
         @FutureOrPresent
         LocalDate startDate,
 
-        @NotNull
+        @Nonnull
         @FutureOrPresent
         LocalDate endDate,
 

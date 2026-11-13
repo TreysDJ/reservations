@@ -1,12 +1,13 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Component
 public class ReservationValidator {
-    public void validate(Reservation reservation) {
+    public void validate(@Nonnull Reservation reservation) {
         if (reservation.roomId() == null) {
             throw new IllegalArgumentException("Room ID cannot be null");
         }

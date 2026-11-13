@@ -52,7 +52,7 @@ public class ReservationController {
 
     @PostMapping("/create")
     public ResponseEntity<Reservation> createReservation(
-            @RequestBody Reservation reservationToCreate
+            @Nonnull @RequestBody Reservation reservationToCreate
     ) {
         reservationValidator.validate(reservationToCreate);
         log.info("Called createReservation");
@@ -62,8 +62,8 @@ public class ReservationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(
-            @PathVariable("id") Long id,
-            @RequestBody @Valid Reservation reservationToUpdate
+            @Nonnull @PathVariable("id") Long id,
+            @Nonnull @RequestBody @Valid Reservation reservationToUpdate
     ) {
         log.info("Called updateReservation id={}, reservationToUpdate={}", id, reservationToUpdate);
         Reservation updated = reservationService.updateReservation(id, reservationToUpdate);
@@ -72,7 +72,7 @@ public class ReservationController {
 
     @DeleteMapping("/{id}/cancel")
     public ResponseEntity<Void> deleteReservation(
-            @PathVariable("id") Long id
+            @Nonnull @PathVariable("id") Long id
     ) {
         log.info("Called deleteReservation: id={}", id);
         reservationService.cancelReservation(id);
@@ -81,7 +81,7 @@ public class ReservationController {
 
     @PostMapping("/{id}/approve")
     public ResponseEntity<Reservation> approveReservation(
-            @PathVariable("id") Long id
+            @Nonnull @PathVariable("id") Long id
     ) {
         log.info("Called approveReservation: id={}", id);
         Reservation reservation = reservationService.approveReservation(id);

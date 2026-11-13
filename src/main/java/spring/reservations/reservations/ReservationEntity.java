@@ -1,5 +1,6 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -24,9 +25,12 @@ public class ReservationEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReservationStatus status;
+
+    @Version
+    @Column(name = "reservation_version")
+    private Long version;
 
     public ReservationEntity() {
 
@@ -41,7 +45,7 @@ public class ReservationEntity {
         this.status = status;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nonnull Long id) {
         this.id = id;
     }
 
@@ -53,7 +57,7 @@ public class ReservationEntity {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(@Nonnull Long userId) {
         this.userId = userId;
     }
 
@@ -61,7 +65,7 @@ public class ReservationEntity {
         return roomId;
     }
 
-    public void setRoomId(Long roomId) {
+    public void setRoomId(@Nonnull Long roomId) {
         this.roomId = roomId;
     }
 
@@ -69,7 +73,7 @@ public class ReservationEntity {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(@Nonnull LocalDate startDate) {
         this.startDate = startDate;
     }
 
@@ -77,7 +81,7 @@ public class ReservationEntity {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(@Nonnull LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -85,7 +89,7 @@ public class ReservationEntity {
         return status;
     }
 
-    public void setStatus(ReservationStatus status) {
+    public void setStatus(@Nonnull ReservationStatus status) {
         this.status = status;
     }
 }

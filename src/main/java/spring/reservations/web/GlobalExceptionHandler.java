@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +22,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Internal server error",
-                e.getMessage(),
                 LocalDateTime.now()
         );
 
@@ -36,7 +36,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Entity not found",
-                e.getMessage(),
                 LocalDateTime.now()
         );
 
@@ -55,12 +54,27 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDTO errorDto = new ErrorResponseDTO(
                 "Bad request",
-                e.getMessage(),
                 LocalDateTime.now()
         );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(errorDto);
+    }
+
+    @ExceptionHandler({
+            ObjectOptimisticLockingFailureException.class
+    })
+    public ResponseEntity<ErrorResponseDTO> handleConflict(ObjectOptimisticLockingFailureException e) {
+        log.error("Handle conflict exception", e);
+
+        ErrorResponseDTO errorDto = new ErrorResponseDTO(
+                "Conflict",
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(errorDto);
     }
 }

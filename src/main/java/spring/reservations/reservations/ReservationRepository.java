@@ -1,5 +1,6 @@
 package spring.reservations.reservations;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,14 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
-    @Modifying
-    @Query("""
-             update ReservationEntity r
-             set r.status = :status
-             where r.id = :id
-            """)
-    void setStatus(@Param("id") Long id, @Param("status") ReservationStatus reservationStatus);
-
     @Query("""
             SELECT r.id from ReservationEntity r
             WHERE r.roomId = :roomId 
@@ -26,10 +19,26 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             AND r.status = :status
             """)
     List<Long> findConflictReservations(
-            @Param("roomId") Long roomId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("status") ReservationStatus status
+            @Nonnull @Param("roomId") Long roomId,
+            @Nonnull @Param("startDate") LocalDate startDate,
+            @Nonnull @Param("endDate") LocalDate endDate,
+            @Nonnull @Param("status") ReservationStatus status
+    );
+
+    @Query("""
+            SELECT r.id from ReservationEntity r
+            WHERE r.roomId = :roomId 
+            AND r.id != :id
+            AND :startDate < r.endDate
+            AND :endDate > r.startDate
+            AND r.status = :status
+            """)
+    List<Long> findConflictReservations(
+            @Nonnull @Param("roomId") Long roomId,
+            @Nonnull @Param("startDate") LocalDate startDate,
+            @Nonnull @Param("endDate") LocalDate endDate,
+            @Nonnull @Param("status") ReservationStatus status,
+            @Nonnull @Param("id") Long id
     );
 
     @Query("""
@@ -39,8 +48,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             ORDER BY r.id ASC
             """)
     List<ReservationEntity> findAllByFilter(
-            @Param("roomId") Long roomId,
-            @Param("userId") Long userId,
+            @Nonnull @Param("roomId") Long roomId,
+            @Nonnull @Param("userId") Long userId,
             Pageable pageable
     );
 }
