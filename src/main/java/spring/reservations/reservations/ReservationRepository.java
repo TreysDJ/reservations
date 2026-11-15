@@ -39,13 +39,4 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Nonnull @Param("userId") Long userId,
             Pageable pageable
     );
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("""
-             SELECT r FROM ReservationEntity r
-             WHERE r.id = :id
-            """)
-    ReservationEntity findBReservationyIdWithLock(
-            @Nonnull @Param("id") Long id
-    );
 }
