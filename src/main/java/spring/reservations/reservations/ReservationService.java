@@ -93,7 +93,6 @@ public class ReservationService {
             if (isConflict) {
                 throw new IllegalArgumentException("Cannot create reservation: Room ID or Date is incorrect");
             }
-
             ReservationEntity entityToSave = mapper.toEntity(reservationToCreate);
             entityToSave.setStatus(ReservationStatus.PENDING);
             entityToSave.setRoomId(room.getRoomId());
@@ -102,43 +101,10 @@ public class ReservationService {
         });
     }
 
-    public Reservation updateReservation(@Nonnull Long id, @Nonnull Reservation reservationToUpdate) {
-        return tx.execute(status -> {
-            ReservationEntity reservationEntity = reservationRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
-
-            if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
-                throw new IllegalStateException("Cannot modify reservation: status=" + reservationEntity.getStatus());
-            }
-
-            if (!reservationToUpdate.endDate().isAfter(reservationToUpdate.startDate())) {
-                throw new IllegalArgumentException("Start date must be earlier then end date");
-            }
-
-            boolean isConflict = availlabilityService.isReservationConflict(
-                    reservationToUpdate.roomId(),
-                    reservationToUpdate.startDate(),
-                    reservationToUpdate.endDate(),
-                    reservationToUpdate.id()
-            );
-
-            if (isConflict) {
-                throw new IllegalArgumentException("Cannot create reservation: Date is incorrect");
-            }
-            reservationEntity.setStartDate(reservationToUpdate.startDate());
-            reservationEntity.setEndDate(reservationToUpdate.endDate());
-            reservationEntity.setRoomId(reservationToUpdate.roomId());
-            return mapper.toDomain(reservationEntity);
-        });
-    }
-
     public void cancelReservation(@Nonnull Long id) {
         tx.executeWithoutResult(status -> {
-            ReservationEntity reservationEntity = reservationRepository.findBReservationyIdWithLock(id);
-
-            if (reservationEntity == null) {
-                throw new EntityNotFoundException("Not found reservation by id=" + id);
-            }
+            ReservationEntity reservationEntity = reservationRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
 
             if (reservationEntity.getStatus().equals(ReservationStatus.APPROVED)) {
                 throw new IllegalArgumentException("Cannot cancel reservation: status=APPROVED");
@@ -149,18 +115,15 @@ public class ReservationService {
             }
 
             reservationEntity.setStatus(ReservationStatus.CANCELLED);
+            reservationRepository.save(reservationEntity);
             log.info("Successfully cancelled reservation: id={}", id);
         });
     }
 
-
     public Reservation approveReservation(@Nonnull Long id) {
         return tx.execute(status -> {
-            ReservationEntity reservationEntity = reservationRepository.findBReservationyIdWithLock(id);
-
-            if (reservationEntity == null) {
-                throw new EntityNotFoundException("Not found reservation by id=" + id);
-            }
+            ReservationEntity reservationEntity = reservationRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
 
             if (reservationEntity.getStatus() == ReservationStatus.APPROVED) {
                 return mapper.toDomain(reservationEntity);
@@ -169,18 +132,9 @@ public class ReservationService {
             if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
                 throw new IllegalStateException("Cannot approve reservation: status=" + reservationEntity.getStatus());
             }
-
-            boolean isConflict = availlabilityService.isReservationConflict(
-                    reservationEntity.getRoomId(),
-                    reservationEntity.getStartDate(),
-                    reservationEntity.getEndDate()
-            );
-
-            if (isConflict) {
-                throw new IllegalStateException("Cannot approve reservation: isConflict = true");
-            }
             reservationEntity.setStatus(ReservationStatus.APPROVED);
-            return mapper.toDomain(reservationEntity);
+            ReservationEntity savedEntity = reservationRepository.save(reservationEntity);
+            return mapper.toDomain(savedEntity);
         });
     }
 }

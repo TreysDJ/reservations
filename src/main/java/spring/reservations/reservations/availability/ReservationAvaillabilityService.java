@@ -1,7 +1,6 @@
 package spring.reservations.reservations.availability;
 
 import jakarta.annotation.Nonnull;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,32 +32,8 @@ public class ReservationAvaillabilityService {
                 roomId,
                 startDate,
                 endDate,
-                ReservationStatus.APPROVED
-        );
-
-        if (conflicting.isEmpty()) {
-            return false;
-        }
-        log.info("Conflicting with: id={}", conflicting);
-        return true;
-    }
-
-    public boolean isReservationConflict(
-            @Nonnull Long roomId,
-            @Nonnull LocalDate startDate,
-            @Nonnull LocalDate endDate,
-            @Nonnull Long id
-    ) {
-        if (!endDate.isAfter(startDate)) {
-            throw new IllegalArgumentException("Start date must be earlier than end date");
-        }
-
-        List<Long> conflicting = repository.findConflictReservations(
-                roomId,
-                startDate,
-                endDate,
                 ReservationStatus.APPROVED,
-                id
+                ReservationStatus.PENDING
         );
 
         if (conflicting.isEmpty()) {

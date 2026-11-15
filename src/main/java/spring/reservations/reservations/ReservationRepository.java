@@ -17,13 +17,15 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             WHERE r.roomId = :roomId 
             AND :startDate < r.endDate
             AND :endDate > r.startDate
-            AND r.status = :status
+            AND (r.status = :approved
+             OR r.status = :pending)
             """)
     List<Long> findConflictReservations(
             @Nonnull @Param("roomId") Long roomId,
             @Nonnull @Param("startDate") LocalDate startDate,
             @Nonnull @Param("endDate") LocalDate endDate,
-            @Nonnull @Param("status") ReservationStatus status
+            @Nonnull @Param("approved") ReservationStatus approved,
+            @Nonnull @Param("pending") ReservationStatus pending
     );
 
     @Query("""
@@ -45,14 +47,5 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             """)
     ReservationEntity findBReservationyIdWithLock(
             @Nonnull @Param("id") Long id
-    );
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("""
-            SELECT r FROM ReservationEntity r
-            WHERE r.roomId = :roomId
-            """)
-    ReservationEntity findRoomByIdWithLock(
-            @Nonnull @Param("roomId") Long roomId
     );
 }

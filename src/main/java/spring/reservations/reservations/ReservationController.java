@@ -60,16 +60,6 @@ public class ReservationController {
                 .body(reservationService.createReservation(reservationToCreate));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Reservation> updateReservation(
-            @Nonnull @PathVariable("id") Long id,
-            @Nonnull @RequestBody @Valid Reservation reservationToUpdate
-    ) {
-        log.info("Called updateReservation id={}, reservationToUpdate={}", id, reservationToUpdate);
-        Reservation updated = reservationService.updateReservation(id, reservationToUpdate);
-        return ResponseEntity.ok(updated);
-    }
-
     @DeleteMapping("/{id}/cancel")
     public ResponseEntity<Void> deleteReservation(
             @Nonnull @PathVariable("id") Long id
