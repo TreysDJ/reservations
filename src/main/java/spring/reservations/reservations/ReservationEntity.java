@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table(name = "reservations")
 @Entity
@@ -27,6 +28,9 @@ public class ReservationEntity {
 
     @Column(name = "status")
     private ReservationStatus status;
+
+    @Column(name ="time_for_payment")
+    private LocalDateTime timeForPayment;
 
     @Version
     @Column(name = "reservation_version")
@@ -91,5 +95,13 @@ public class ReservationEntity {
 
     public void setStatus(@Nonnull ReservationStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getTimeForPayment() {
+        return timeForPayment;
+    }
+
+    public void setTimeForPayment(LocalDateTime now) {
+        this.timeForPayment = now;
     }
 }

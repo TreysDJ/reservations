@@ -10,6 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.reservations.reservations.availability.ReservationAvaillabilityService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -68,6 +69,21 @@ public class ReservationService {
         });
     }
 
+    public List<Room> getAllRooms() {
+        return txRead.execute(status -> {
+            List<Room> allRooms = roomRepository.findAllRooms();
+            return allRooms.stream().toList();
+        });
+    }
+
+    public List<Reservation> getMyReservations(@Nonnull Long id) {
+        return txRead.execute(status -> {
+            List<ReservationEntity> allReservations = reservationRepository.findMyReservations(id);
+            return allReservations.stream()
+                    .map(mapper::toDomain).toList();
+        });
+    }
+
     public Reservation createReservation(@Nonnull Reservation reservationToCreate) {
         if (reservationToCreate.status() != null) {
             throw new IllegalArgumentException("Status should be empty");
@@ -95,7 +111,8 @@ public class ReservationService {
             }
             ReservationEntity entityToSave = mapper.toEntity(reservationToCreate);
             entityToSave.setStatus(ReservationStatus.PENDING);
-            entityToSave.setRoomId(room.getRoomId());
+            entityToSave.setRoomId(reservationToCreate.roomId());
+            entityToSave.setTimeForPayment(LocalDateTime.now().plusMinutes(15));
             ReservationEntity savedEntity = reservationRepository.save(entityToSave);
             return mapper.toDomain(savedEntity);
         });
@@ -136,5 +153,16 @@ public class ReservationService {
             ReservationEntity savedEntity = reservationRepository.save(reservationEntity);
             return mapper.toDomain(savedEntity);
         });
+    }
+
+    public void cancelExpiredReservations() {
+        List<ReservationEntity> expiredReservations = reservationRepository.findExpiredReservations(
+                LocalDateTime.now(),
+                ReservationStatus.PENDING
+        );
+
+        for (ReservationEntity reservationEntity : expiredReservations) {
+            cancelReservation(reservationEntity.getId());
+        }
     }
 }

@@ -1,4 +1,4 @@
-INSERT INTO rooms (roomId) VALUES
+INSERT INTO rooms (room_id) VALUES
 ('21'),
 ('22'),
 ('23'),

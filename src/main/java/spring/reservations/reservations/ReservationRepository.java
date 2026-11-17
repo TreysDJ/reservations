@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
@@ -38,5 +39,23 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Nonnull @Param("roomId") Long roomId,
             @Nonnull @Param("userId") Long userId,
             Pageable pageable
+    );
+
+    @Query("""
+            SELECT r.roomId FROM ReservationEntity r
+            WHERE r.userId = :userId
+            """)
+    List<ReservationEntity> findMyReservations(
+            @Nonnull @Param("userid") Long userId
+    );
+
+    @Query("""
+            SELECT r FROM ReservationEntity r
+            WHERE r.timeForPayment < :currentTime
+            AND r.status = :status
+            """)
+    List<ReservationEntity> findExpiredReservations(
+            @Nonnull @Param("currentTime") LocalDateTime currentTime,
+            @Nonnull @Param("status") ReservationStatus status
     );
 }

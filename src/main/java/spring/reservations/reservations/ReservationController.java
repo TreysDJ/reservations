@@ -50,6 +50,18 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.findAllByFilter(filter));
     }
 
+    @GetMapping("/rooms")
+    public ResponseEntity<List<Room>> getAllRooms() {
+        log.info("Called getAllRooms");
+        return ResponseEntity.ok(reservationService.getAllRooms());
+    }
+
+    @GetMapping("/my/reservations")
+    public ResponseEntity<List<Reservation>> getMyReservations(@RequestParam(name = "userId") Long userId) {
+        log.info("called getMyReservations");
+        return ResponseEntity.ok(reservationService.getMyReservations(userId));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<Reservation> createReservation(
             @Nonnull @RequestBody Reservation reservationToCreate

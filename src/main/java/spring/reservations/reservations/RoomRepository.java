@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface RoomRepository extends JpaRepository<Room, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
@@ -16,4 +18,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Room findRoomByIdWithLock(
             @Nonnull @Param("roomId") Long roomId
     );
+
+    @Query("""
+            SELECT r.roomId FROM Room r
+            """)
+    List<Room> findAllRooms();
 }
