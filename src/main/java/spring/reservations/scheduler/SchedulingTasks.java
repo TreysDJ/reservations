@@ -1,5 +1,6 @@
 package spring.reservations.scheduler;
 
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,19 +16,15 @@ import java.util.List;
 public class SchedulingTasks {
     private static final Logger log = LoggerFactory.getLogger(SchedulingTasks.class);
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private final ReservationService reservationService;
 
-    public SchedulingTasks(ReservationService reservationService) {
+    public SchedulingTasks(@Nonnull ReservationService reservationService) {
         this.reservationService = reservationService;
     }
-    @Scheduled(fixedRate = 1000)
-    public void reportCurrentTime() {
-        log.info("The time is now {}", dateFormat.format(new Date()));
-    }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedDelay = 60000)
     public void cancelExpiredReservations() {
+        log.info("called cancelExpiredReservations");
         reservationService.cancelExpiredReservations();
     }
 }

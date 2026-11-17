@@ -1,26 +1,14 @@
 package spring.reservations.reservations;
 
-import jakarta.persistence.*;
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.Null;
 
-@Table(name = "rooms")
-@Entity
-public class Room {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+record Room(
+        @Null
+        Long id,
 
-    @Column(name = "room_id")
-    private Long roomId;
+        @Nonnull
+        Long roomId
+) {
 
-    protected Room() {
-    }
-
-    public Room(Long roomId) {
-        this.roomId = roomId;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
 }

@@ -12,7 +12,7 @@ CREATE TABLE reservations
     start_date          DATE      NOT NULL,
     end_date            DATE      NOT NULL,
     status              VARCHAR(255),
-    time_for_payment    TIMESTAMP NOT NULL,
+    time_for_payment    TIMESTAMP WITH TIME ZONE NOT NULL,
     reservation_version BIGINT
 );
 

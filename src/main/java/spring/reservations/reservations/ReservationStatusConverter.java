@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 @Converter(autoApply = true)
 public class ReservationStatusConverter implements AttributeConverter<ReservationStatus, String> {
-    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
-
     @Override
     public String convertToDatabaseColumn(@Nonnull ReservationStatus status) {
         return status.getValue();

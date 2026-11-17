@@ -8,6 +8,7 @@ import spring.reservations.reservations.ReservationRepository;
 import spring.reservations.reservations.ReservationStatus;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -21,8 +22,8 @@ public class ReservationAvaillabilityService {
 
     public boolean isReservationConflict(
             @Nonnull Long roomId,
-            @Nonnull LocalDate startDate,
-            @Nonnull LocalDate endDate
+            @Nonnull ZonedDateTime startDate,
+            @Nonnull ZonedDateTime endDate
     ) {
         if (!endDate.isAfter(startDate)) {
             throw new IllegalArgumentException("Start date must be earlier than end date");

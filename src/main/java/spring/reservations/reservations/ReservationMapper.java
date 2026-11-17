@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReservationMapper {
     @Nullable
-    public Reservation toDomain(@Nonnull ReservationEntity reservation) {
+    public Reservation toDomain(@Nonnull ReservationEntity reservationEntity) {
         return new Reservation(
-                reservation.getId(),
-                reservation.getUserId(),
-                reservation.getRoomId(),
-                reservation.getStartDate(),
-                reservation.getEndDate(),
-                reservation.getStatus()
+                reservationEntity.getId(),
+                reservationEntity.getUserId(),
+                reservationEntity.getRoomId(),
+                reservationEntity.getStartDate(),
+                reservationEntity.getEndDate(),
+                reservationEntity.getStatus()
         );
     }
 
@@ -26,6 +26,20 @@ public class ReservationMapper {
                 reservation.startDate(),
                 reservation.endDate(),
                 reservation.status()
+        );
+    }
+
+    public Room toDomain(@Nonnull RoomEntity room) {
+        return new Room(
+                room.getId(),
+                room.getRoomId()
+        );
+    }
+
+    public RoomEntity toEntity(@Nonnull Room room) {
+        return new RoomEntity(
+                room.id(),
+                room.roomId()
         );
     }
 }

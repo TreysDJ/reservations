@@ -10,7 +10,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.reservations.reservations.availability.ReservationAvaillabilityService;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -71,8 +72,8 @@ public class ReservationService {
 
     public List<Room> getAllRooms() {
         return txRead.execute(status -> {
-            List<Room> allRooms = roomRepository.findAllRooms();
-            return allRooms.stream().toList();
+            List<RoomEntity> allRoomEntities = roomRepository.findAllRooms();
+            return allRoomEntities.stream().map(mapper::toDomain).toList();
         });
     }
 
@@ -94,10 +95,10 @@ public class ReservationService {
         }
 
         return tx.execute(status -> {
-            Room room = roomRepository.findRoomByIdWithLock(reservationToCreate.roomId());
+            RoomEntity roomEntity = roomRepository.findRoomByIdWithLock(reservationToCreate.roomId());
 
-            if (room == null) {
-                throw new EntityNotFoundException("Not found room by id=" + reservationToCreate.roomId());
+            if (roomEntity == null) {
+                throw new EntityNotFoundException("Not found roomEntity by id=" + reservationToCreate.roomId());
             }
 
             boolean isConflict = availlabilityService.isReservationConflict(
@@ -107,12 +108,12 @@ public class ReservationService {
             );
 
             if (isConflict) {
-                throw new IllegalArgumentException("Cannot create reservation: Room ID or Date is incorrect");
+                throw new IllegalArgumentException("Cannot create reservation: RoomEntity ID or Date is incorrect");
             }
             ReservationEntity entityToSave = mapper.toEntity(reservationToCreate);
             entityToSave.setStatus(ReservationStatus.PENDING);
             entityToSave.setRoomId(reservationToCreate.roomId());
-            entityToSave.setTimeForPayment(LocalDateTime.now().plusMinutes(15));
+            entityToSave.setTimeForPayment(ZonedDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15));
             ReservationEntity savedEntity = reservationRepository.save(entityToSave);
             return mapper.toDomain(savedEntity);
         });
@@ -157,7 +158,7 @@ public class ReservationService {
 
     public void cancelExpiredReservations() {
         List<ReservationEntity> expiredReservations = reservationRepository.findExpiredReservations(
-                LocalDateTime.now(),
+                ZonedDateTime.now(ZoneId.of("Europe/Moscow")),
                 ReservationStatus.PENDING
         );
 

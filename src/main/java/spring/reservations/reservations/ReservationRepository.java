@@ -1,15 +1,12 @@
 package spring.reservations.reservations;
 
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
@@ -23,8 +20,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             """)
     List<Long> findConflictReservations(
             @Nonnull @Param("roomId") Long roomId,
-            @Nonnull @Param("startDate") LocalDate startDate,
-            @Nonnull @Param("endDate") LocalDate endDate,
+            @Nonnull @Param("startDate") ZonedDateTime startDate,
+            @Nonnull @Param("endDate") ZonedDateTime endDate,
             @Nonnull @Param("approved") ReservationStatus approved,
             @Nonnull @Param("pending") ReservationStatus pending
     );
@@ -50,12 +47,14 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     );
 
     @Query("""
-            SELECT r FROM ReservationEntity r
+            SELECT r.id FROM ReservationEntity r
             WHERE r.timeForPayment < :currentTime
             AND r.status = :status
+            ORDER BY r.timeForPayment DESC
+            LIMIT 200
             """)
     List<ReservationEntity> findExpiredReservations(
-            @Nonnull @Param("currentTime") LocalDateTime currentTime,
+            @Nonnull @Param("currentTime") ZonedDateTime currentTime,
             @Nonnull @Param("status") ReservationStatus status
     );
 }

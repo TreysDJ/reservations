@@ -36,7 +36,7 @@ public class ReservationAvailabilityController {
                 request.endDate()
         );
 
-        String message = isConflict ? "Room not available to reservation" : "Room available to reservation";
+        String message = isConflict ? "RoomEntity not available to reservation" : "RoomEntity available to reservation";
         AvailabilityStatus status = isConflict ? AvailabilityStatus.RESERVED : AvailabilityStatus.AVAILABLE;
 
         return ResponseEntity.status(200).body(new CheckAvailabilityResponse(message, status));

@@ -9,18 +9,18 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
-            SELECT r FROM Room r
+            SELECT r FROM RoomEntity r
             WHERE r.roomId = :roomId
             """)
-    Room findRoomByIdWithLock(
+    RoomEntity findRoomByIdWithLock(
             @Nonnull @Param("roomId") Long roomId
     );
 
     @Query("""
-            SELECT r.roomId FROM Room r
+            SELECT r.roomId FROM RoomEntity r
             """)
-    List<Room> findAllRooms();
+    List<RoomEntity> findAllRooms();
 }

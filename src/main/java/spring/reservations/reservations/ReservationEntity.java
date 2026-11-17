@@ -3,8 +3,7 @@ package spring.reservations.reservations;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Table(name = "reservations")
 @Entity
@@ -21,16 +20,16 @@ public class ReservationEntity {
     private Long roomId;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    private ZonedDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    private ZonedDateTime endDate;
 
     @Column(name = "status")
     private ReservationStatus status;
 
-    @Column(name ="time_for_payment")
-    private LocalDateTime timeForPayment;
+    @Column(name = "time_for_payment")
+    private ZonedDateTime timeForPayment;
 
     @Version
     @Column(name = "reservation_version")
@@ -40,7 +39,7 @@ public class ReservationEntity {
 
     }
 
-    public ReservationEntity(Long id, Long userId, Long roomId, LocalDate startDate, LocalDate endDate, ReservationStatus status) {
+    public ReservationEntity(Long id, Long userId, Long roomId, ZonedDateTime startDate, ZonedDateTime endDate, ReservationStatus status) {
         this.id = id;
         this.userId = userId;
         this.roomId = roomId;
@@ -73,19 +72,19 @@ public class ReservationEntity {
         this.roomId = roomId;
     }
 
-    public LocalDate getStartDate() {
+    public ZonedDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@Nonnull LocalDate startDate) {
+    public void setStartDate(@Nonnull ZonedDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public ZonedDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@Nonnull LocalDate endDate) {
+    public void setEndDate(@Nonnull ZonedDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -97,11 +96,11 @@ public class ReservationEntity {
         this.status = status;
     }
 
-    public LocalDateTime getTimeForPayment() {
+    public ZonedDateTime getTimeForPayment() {
         return timeForPayment;
     }
 
-    public void setTimeForPayment(LocalDateTime now) {
+    public void setTimeForPayment(ZonedDateTime now) {
         this.timeForPayment = now;
     }
 }
