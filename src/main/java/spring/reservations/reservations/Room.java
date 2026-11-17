@@ -13,8 +13,11 @@ public class Room {
     @Column(name = "room_id")
     private Long roomId;
 
-    public Room() {
+    protected Room() {
+    }
 
+    public Room(Long roomId) {
+        this.roomId = roomId;
     }
 
     public Long getRoomId() {
