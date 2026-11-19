@@ -4,12 +4,13 @@ import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 public record CheckAvailabilityRequest(
         @Nonnull Long roomId,
 
-        @Nonnull LocalDate startDate,
+        @Nonnull ZonedDateTime startDate,
 
-        @Nonnull LocalDate endDate
+        @Nonnull ZonedDateTime endDate
 ) {
 }

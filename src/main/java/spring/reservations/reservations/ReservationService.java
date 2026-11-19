@@ -147,8 +147,8 @@ public class ReservationService {
                 return mapper.toDomain(reservationEntity);
             }
 
-            if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
-                throw new IllegalStateException("Cannot approve reservation: status=" + reservationEntity.getStatus());
+            if (reservationEntity.getStatus() == ReservationStatus.CANCELLED) {
+                throw new IllegalStateException("Cannot approve reservation: status=CANCELLED");
             }
             reservationEntity.setStatus(ReservationStatus.APPROVED);
             ReservationEntity savedEntity = reservationRepository.save(reservationEntity);

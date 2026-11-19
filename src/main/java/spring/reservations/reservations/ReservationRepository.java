@@ -33,8 +33,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             ORDER BY r.id ASC
             """)
     List<ReservationEntity> findAllByFilter(
-            @Nonnull @Param("roomId") Long roomId,
-            @Nonnull @Param("userId") Long userId,
+            @Param("roomId") Long roomId,
+            @Param("userId") Long userId,
             Pageable pageable
     );
 

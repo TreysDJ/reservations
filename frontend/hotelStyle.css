@@ -1,6 +1,6 @@
 body {
     background-color: #1a1a1a;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("images/room3.jpg");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("images/room3.webp");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
