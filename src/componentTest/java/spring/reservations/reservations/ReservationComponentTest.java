@@ -7,11 +7,15 @@ import spring.reservations.BaseComponentTest;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static spring.reservations.reservations.HotelConstants.CHECK_IN_TIME;
+import static spring.reservations.reservations.HotelConstants.CHECK_OUT_TIME;
+import static spring.reservations.reservations.HotelConstants.HOTEL_ZONE;
 
 class ReservationComponentTest extends BaseComponentTest {
 
@@ -21,11 +25,72 @@ class ReservationComponentTest extends BaseComponentTest {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Autowired
+    private ReservationRepository reservationRepository;
+
     @Test
     void shouldCreateReservations() {
         RoomEntity room = createRoom(nextRoomNumber());
-        Reservation created = createReservation(1001L, room.getRoomId());
+        LocalDate arrivalDate = LocalDate.now(HOTEL_ZONE).plusDays(10);
+        LocalDate departureDate = arrivalDate.plusDays(2);
+
+        Reservation created = createReservation(
+                1001L,
+                room.getRoomId(),
+                arrivalDate.minusDays(1).atTime(22, 0).atZone(ZoneOffset.UTC),
+                departureDate.minusDays(1).atTime(22, 0).atZone(ZoneOffset.UTC)
+        );
+
         assertThat(created.id()).isPositive();
+        assertThat(created.startDate().getZone()).isEqualTo(HOTEL_ZONE);
+        assertThat(created.startDate().toLocalDate()).isEqualTo(arrivalDate);
+        assertThat(created.startDate().toLocalTime()).isEqualTo(CHECK_IN_TIME);
+        assertThat(created.endDate().getZone()).isEqualTo(HOTEL_ZONE);
+        assertThat(created.endDate().toLocalDate()).isEqualTo(departureDate);
+        assertThat(created.endDate().toLocalTime()).isEqualTo(CHECK_OUT_TIME);
+
+        ReservationEntity saved = reservationRepository.findById(created.id()).orElseThrow();
+        ZonedDateTime expectedStart = arrivalDate.atTime(CHECK_IN_TIME).atZone(HOTEL_ZONE);
+        ZonedDateTime expectedEnd = departureDate.atTime(CHECK_OUT_TIME).atZone(HOTEL_ZONE);
+
+        assertThat(saved.getStartDate().toInstant()).isEqualTo(expectedStart.toInstant());
+        assertThat(saved.getEndDate().toInstant()).isEqualTo(expectedEnd.toInstant());
+    }
+
+    @Test
+    void shouldNotLetRequestedCheckoutTimeBlockNextGuest() {
+        RoomEntity room = createRoom(nextRoomNumber());
+        long roomId = room.getRoomId();
+        LocalDate firstGuestArrivalDate = LocalDate.now(HOTEL_ZONE).plusDays(10);
+        LocalDate firstGuestDepartureDate = firstGuestArrivalDate.plusDays(2);
+        LocalDate secondGuestArrivalDate = firstGuestDepartureDate;
+        LocalDate secondGuestDepartureDate = secondGuestArrivalDate.plusDays(2);
+
+        // время отъезда первого клиента не должно влиять на заселение второго клиента
+        Reservation firstGuest = createReservation(
+                1001L,
+                roomId,
+                firstGuestArrivalDate.atTime(9, 0).atZone(ZoneOffset.UTC),
+                firstGuestDepartureDate.atTime(18, 0).atZone(ZoneOffset.UTC)
+        );
+
+        Reservation secondGuest = createReservation(
+                1002L,
+                roomId,
+                secondGuestArrivalDate.atTime(11, 0).atZone(ZoneOffset.UTC),
+                secondGuestDepartureDate.atTime(18, 0).atZone(ZoneOffset.UTC)
+        );
+
+        assertThat(firstGuest.id()).isPositive();
+        assertThat(secondGuest.id()).isPositive();
+        assertThat(secondGuest.id()).isNotEqualTo(firstGuest.id());
+
+        List<Reservation> reservations = reservationService.findAllByFilter(
+                new ReservationsFindFilter(roomId, null, null, null)
+        );
+        assertThat(reservations)
+                .extracting(Reservation::id)
+                .containsExactlyInAnyOrder(firstGuest.id(), secondGuest.id());
     }
 
     @Test
@@ -134,6 +199,10 @@ class ReservationComponentTest extends BaseComponentTest {
     private Reservation createReservation(long userId, long roomId) {
         ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow")).plusDays(10);
         ZonedDateTime endDate = startDate.plusDays(2);
+        return createReservation(userId, roomId, startDate, endDate);
+    }
+
+    private Reservation createReservation(long userId, long roomId, ZonedDateTime startDate, ZonedDateTime endDate) {
         Reservation request = new Reservation(null, userId, roomId, startDate, endDate, null);
         return reservationService.createReservation(request);
     }
