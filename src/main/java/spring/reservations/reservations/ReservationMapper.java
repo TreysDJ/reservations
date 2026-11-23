@@ -12,8 +12,8 @@ public class ReservationMapper {
                 reservationEntity.getId(),
                 reservationEntity.getUserId(),
                 reservationEntity.getRoomId(),
-                reservationEntity.getStartDate(),
-                reservationEntity.getEndDate(),
+                reservationEntity.getStartDate().withZoneSameInstant(HotelConstants.HOTEL_ZONE),
+                reservationEntity.getEndDate().withZoneSameInstant(HotelConstants.HOTEL_ZONE),
                 reservationEntity.getStatus()
         );
     }

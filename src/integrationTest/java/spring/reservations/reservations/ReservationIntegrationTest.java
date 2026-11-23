@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import spring.reservations.BaseIntegrationTest;
 import tools.jackson.core.type.TypeReference;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -22,15 +23,22 @@ class ReservationIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void shouldCreateReservationAndListIt() {
-        Reservation request = createReservation();
+        ReservationCreateRequestDTO request = createReservationRequest();
         Reservation created = postReservation(request);
+
+        ZonedDateTime expectedStart = request.startDate()
+                .atTime(HotelConstants.CHECK_IN_TIME)
+                .atZone(HotelConstants.HOTEL_ZONE);
+        ZonedDateTime expectedEnd = request.endDate()
+                .atTime(HotelConstants.CHECK_OUT_TIME)
+                .atZone(HotelConstants.HOTEL_ZONE);
 
         assertThat(created).isNotNull();
         assertThat(created.id()).isPositive();
         assertThat(created.userId()).isEqualTo(request.userId());
         assertThat(created.roomId()).isEqualTo(request.roomId());
-        assertThat(created.startDate()).isEqualTo(request.startDate());
-        assertThat(created.endDate()).isEqualTo(request.endDate());
+        assertThat(created.startDate()).isEqualTo(expectedStart);
+        assertThat(created.endDate()).isEqualTo(expectedEnd);
         assertThat(created.status()).isEqualTo(ReservationStatus.PENDING);
 
         var listResponse = restClient.get()
@@ -50,14 +58,14 @@ class ReservationIntegrationTest extends BaseIntegrationTest {
         assertThat(reservation.id()).isEqualTo(created.id());
         assertThat(reservation.userId()).isEqualTo(request.userId());
         assertThat(reservation.roomId()).isEqualTo(request.roomId());
-        assertThat(reservation.startDate()).isEqualTo(request.startDate());
-        assertThat(reservation.endDate()).isEqualTo(request.endDate());
+        assertThat(reservation.startDate()).isEqualTo(expectedStart);
+        assertThat(reservation.endDate()).isEqualTo(expectedEnd);
         assertThat(reservation.status()).isEqualTo(ReservationStatus.PENDING);
     }
 
     @Test
     void shouldntCreatExistingReservation() {
-        Reservation request = createReservation();
+        ReservationCreateRequestDTO request = createReservationRequest();
         postReservation(request);
 
         var duplicate = sendCreateRequest(request);
@@ -67,14 +75,13 @@ class ReservationIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldntCreateReservationWithIncorrectDate() {
         RoomEntity room = createRoom(nextRoomNumber());
-        ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow"))
-                .plusDays(10)
-                .truncatedTo(ChronoUnit.SECONDS);
-        ZonedDateTime endDate = startDate.minusDays(1);
+        LocalDate startDate = LocalDate.now(HotelConstants.HOTEL_ZONE).plusDays(10);
+        LocalDate endDate = startDate.minusDays(1);
 
-        Reservation invalidRequest = new Reservation(
-                null, 1001L, room.getRoomId(), startDate, endDate, null
+        ReservationCreateRequestDTO invalidRequest = new ReservationCreateRequestDTO(
+                1001L, room.getRoomId(), startDate, endDate
         );
+
         var response = sendCreateRequest(invalidRequest);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -156,16 +163,16 @@ class ReservationIntegrationTest extends BaseIntegrationTest {
     }
 
     private Reservation postReservation() {
-        return postReservation(createReservation());
+        return postReservation(createReservationRequest());
     }
 
-    private Reservation postReservation(Reservation request) {
+    private Reservation postReservation(ReservationCreateRequestDTO request) {
         var createResponse = sendCreateRequest(request);
         assertThat(createResponse.getStatus()).isEqualTo(HttpStatus.CREATED);
         return jsonMapper.readValue(createResponse.getResponseBody(), Reservation.class);
     }
 
-    private EntityExchangeResult<String> sendCreateRequest(Reservation request) {
+    private EntityExchangeResult<String> sendCreateRequest(ReservationCreateRequestDTO request) {
         return restClient.post()
                 .uri("/reservation/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -174,15 +181,12 @@ class ReservationIntegrationTest extends BaseIntegrationTest {
                 .returnResult(String.class);
     }
 
-    private Reservation createReservation() {
+    private ReservationCreateRequestDTO createReservationRequest() {
         long userId = 1001L;
         RoomEntity room = createRoom(nextRoomNumber());
-        long roomId = room.getRoomId();
-        ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow"))
-                .plusDays(10)
-                .truncatedTo(ChronoUnit.SECONDS);
-        ZonedDateTime endDate = startDate.plusDays(2);
-        return new Reservation(null, userId, roomId, startDate, endDate, null);
+        LocalDate startDate = LocalDate.now(HotelConstants.HOTEL_ZONE).plusDays(10);
+        LocalDate endDate = startDate.plusDays(2);
+        return new ReservationCreateRequestDTO(userId, room.getRoomId(), startDate, endDate);
     }
 
     private RoomEntity createRoom(long roomNumber) {

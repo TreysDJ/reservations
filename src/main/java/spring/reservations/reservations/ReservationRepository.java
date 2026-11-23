@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -42,8 +43,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             SELECT r.roomId FROM ReservationEntity r
             WHERE r.userId = :userId
             """)
-    List<ReservationEntity> findMyReservations(
-            @Nonnull @Param("userid") Long userId
+    List<Long> findMyReservations(
+            @Nonnull @Param("userId") Long userId
     );
 
     @Query("""
@@ -53,8 +54,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             ORDER BY r.timeForPayment DESC
             LIMIT 200
             """)
-    List<ReservationEntity> findExpiredReservations(
-            @Nonnull @Param("currentTime") ZonedDateTime currentTime,
+    List<Long> findExpiredReservations(
+            @Nonnull @Param("currentTime") Instant currentTime,
             @Nonnull @Param("status") ReservationStatus status
     );
 }

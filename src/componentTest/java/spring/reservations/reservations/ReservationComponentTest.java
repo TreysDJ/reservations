@@ -34,12 +34,8 @@ class ReservationComponentTest extends BaseComponentTest {
         LocalDate arrivalDate = LocalDate.now(HOTEL_ZONE).plusDays(10);
         LocalDate departureDate = arrivalDate.plusDays(2);
 
-        Reservation created = createReservation(
-                1001L,
-                room.getRoomId(),
-                arrivalDate.minusDays(1).atTime(22, 0).atZone(ZoneOffset.UTC),
-                departureDate.minusDays(1).atTime(22, 0).atZone(ZoneOffset.UTC)
-        );
+        ReservationCreateRequestDTO requestDTO = new ReservationCreateRequestDTO(1001L, room.getRoomId(), arrivalDate, departureDate);
+        Reservation created = createReservation(requestDTO.userId(), requestDTO.roomId(), arrivalDate, departureDate);
 
         assertThat(created.id()).isPositive();
         assertThat(created.startDate().getZone()).isEqualTo(HOTEL_ZONE);
@@ -70,15 +66,15 @@ class ReservationComponentTest extends BaseComponentTest {
         Reservation firstGuest = createReservation(
                 1001L,
                 roomId,
-                firstGuestArrivalDate.atTime(9, 0).atZone(ZoneOffset.UTC),
-                firstGuestDepartureDate.atTime(18, 0).atZone(ZoneOffset.UTC)
+                firstGuestArrivalDate,
+                firstGuestDepartureDate
         );
 
         Reservation secondGuest = createReservation(
                 1002L,
                 roomId,
-                secondGuestArrivalDate.atTime(11, 0).atZone(ZoneOffset.UTC),
-                secondGuestDepartureDate.atTime(18, 0).atZone(ZoneOffset.UTC)
+                secondGuestArrivalDate,
+                secondGuestDepartureDate
         );
 
         assertThat(firstGuest.id()).isPositive();
@@ -95,26 +91,17 @@ class ReservationComponentTest extends BaseComponentTest {
 
     @Test
     void shouldNotCreateReservationWithIncorrectDate() {
-        ZonedDateTime startDate = ZonedDateTime.of(
-                LocalDate.of(2030, 12, 15),
-                LocalTime.of(14, 0),
-                ZoneId.of("Europe/Moscow")
-        );
+        LocalDate startDate = LocalDate.of(2030, 7, 15);
+        LocalDate endDate = LocalDate.now();
 
-        ZonedDateTime endDate = ZonedDateTime.of(
-                LocalDate.of(2026, 11, 15),
-                LocalTime.of(14, 0),
-                ZoneId.of("Europe/Moscow")
-        );
-
-        Reservation request = new Reservation(null, 1001L, nextRoomNumber(), startDate, endDate, null);
+        ReservationCreateRequestDTO request = new ReservationCreateRequestDTO(1001L, nextRoomNumber(), startDate, endDate);
 
         assertThatThrownBy(() -> reservationService.createReservation(request))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Start date must be earlier then end date");
+                .hasMessage("Start date must be earlier than end date");
 
         List<Reservation> reservations = reservationService.findAllByFilter(
-                new ReservationsFindFilter(request.roomId(), request.id(), null, null)
+                new ReservationsFindFilter(request.roomId(), request.userId(), null, null)
         );
         assertThat(reservations).hasSize(0);
     }
@@ -197,14 +184,14 @@ class ReservationComponentTest extends BaseComponentTest {
     }
 
     private Reservation createReservation(long userId, long roomId) {
-        ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("Europe/Moscow")).plusDays(10);
-        ZonedDateTime endDate = startDate.plusDays(2);
+        LocalDate startDate = LocalDate.now(HOTEL_ZONE);
+        LocalDate endDate = startDate.plusDays(2);
         return createReservation(userId, roomId, startDate, endDate);
     }
 
-    private Reservation createReservation(long userId, long roomId, ZonedDateTime startDate, ZonedDateTime endDate) {
-        Reservation request = new Reservation(null, userId, roomId, startDate, endDate, null);
-        return reservationService.createReservation(request);
+    private Reservation createReservation(long userId, long roomId, LocalDate startDate, LocalDate endDate) {
+        ReservationCreateRequestDTO requestDTO = new ReservationCreateRequestDTO(userId, roomId, startDate, endDate);
+        return reservationService.createReservation(requestDTO);
     }
 
     private RoomEntity createRoom(long roomNumber) {

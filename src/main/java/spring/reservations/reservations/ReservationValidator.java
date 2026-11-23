@@ -22,9 +22,12 @@ public class ReservationValidator {
             throw new IllegalArgumentException("Start date must be earlier than end date");
         }
 
-        if (!reservation.startDate().isAfter(ZonedDateTime.now(ZoneId.of("Europe/Moscow"))) ||
-                !reservation.endDate().isAfter(ZonedDateTime.now(ZoneId.of("Europe/Moscow")))) {
-            throw new IllegalArgumentException("Dates must be future or present time");
+        LocalDate today = LocalDate.now(HotelConstants.HOTEL_ZONE);
+        LocalDate startLocal = reservation.startDate()
+                .withZoneSameInstant(HotelConstants.HOTEL_ZONE)
+                .toLocalDate();
+        if (startLocal.isBefore(today)) {
+            throw new IllegalArgumentException("Start date cannot be in the past");
         }
     }
 }

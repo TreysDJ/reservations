@@ -10,8 +10,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.reservations.reservations.availability.ReservationAvaillabilityService;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -27,13 +29,15 @@ public class ReservationService {
     private final ReservationMapper mapper;
     private final TransactionTemplate tx;
     private final TransactionTemplate txRead;
+    private final ReservationValidator reservationValidator;
 
     public ReservationService(
             @Nonnull ReservationRepository reservationRepository,
             @Nonnull RoomRepository roomRepository,
             @Nonnull ReservationMapper mapper,
             @Nonnull ReservationAvaillabilityService availlabilityService,
-            @Nonnull PlatformTransactionManager txManager
+            @Nonnull PlatformTransactionManager txManager,
+            @Nonnull ReservationValidator reservationValidator
     ) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
@@ -42,6 +46,7 @@ public class ReservationService {
         this.tx = new TransactionTemplate(txManager);
         this.txRead = new TransactionTemplate(txManager);
         this.txRead.setReadOnly(true);
+        this.reservationValidator = reservationValidator;
     }
 
     public Reservation getReservationById(@Nonnull Long id) {
@@ -70,22 +75,40 @@ public class ReservationService {
         });
     }
 
-    public List<Room> getAllRooms() {
+    public List<Long> getAllRooms() {
         return txRead.execute(status -> {
-            List<RoomEntity> allRoomEntities = roomRepository.findAllRooms();
-            return allRoomEntities.stream().map(mapper::toDomain).toList();
+            List<Long> allRoomEntities = roomRepository.findAllRooms();
+            return allRoomEntities.stream().toList();
         });
     }
 
-    public List<Reservation> getMyReservations(@Nonnull Long id) {
+    public List<Long> getMyReservations(@Nonnull Long id) {
         return txRead.execute(status -> {
-            List<ReservationEntity> allReservations = reservationRepository.findMyReservations(id);
-            return allReservations.stream()
-                    .map(mapper::toDomain).toList();
+            List<Long> allReservations = reservationRepository.findMyReservations(id);
+            return allReservations.stream().toList();
         });
     }
 
-    public Reservation createReservation(@Nonnull Reservation reservationToCreate) {
+    public Reservation createReservation(@Nonnull ReservationCreateRequestDTO requestDTO) {
+        ZonedDateTime startDateZd = requestDTO.startDate()
+                .atTime(HotelConstants.CHECK_IN_TIME)
+                .atZone(HotelConstants.HOTEL_ZONE);
+
+        ZonedDateTime endDateZd = requestDTO.endDate()
+                .atTime(HotelConstants.CHECK_OUT_TIME)
+                .atZone(HotelConstants.HOTEL_ZONE);
+
+        Reservation reservationToCreate = new Reservation(
+                null,
+                requestDTO.userId(),
+                requestDTO.roomId(),
+                startDateZd,
+                endDateZd,
+                null
+        );
+
+        reservationValidator.validate(reservationToCreate);
+
         if (reservationToCreate.status() != null) {
             throw new IllegalArgumentException("Status should be empty");
         }
@@ -110,10 +133,11 @@ public class ReservationService {
             if (isConflict) {
                 throw new IllegalArgumentException("Cannot create reservation: RoomEntity ID or Date is incorrect");
             }
+
             ReservationEntity entityToSave = mapper.toEntity(reservationToCreate);
             entityToSave.setStatus(ReservationStatus.PENDING);
             entityToSave.setRoomId(reservationToCreate.roomId());
-            entityToSave.setTimeForPayment(ZonedDateTime.now(ZoneId.of("Europe/Moscow")).plusMinutes(15));
+            entityToSave.setTimeForPayment(Instant.now().plus(15, ChronoUnit.MINUTES));
             ReservationEntity savedEntity = reservationRepository.save(entityToSave);
             return mapper.toDomain(savedEntity);
         });
@@ -157,13 +181,17 @@ public class ReservationService {
     }
 
     public void cancelExpiredReservations() {
-        List<ReservationEntity> expiredReservations = reservationRepository.findExpiredReservations(
-                ZonedDateTime.now(ZoneId.of("Europe/Moscow")),
+        List<Long> expiredReservations = reservationRepository.findExpiredReservations(
+                Instant.now(),
                 ReservationStatus.PENDING
         );
 
-        for (ReservationEntity reservationEntity : expiredReservations) {
-            cancelReservation(reservationEntity.getId());
+        try {
+            for (Long reservationEntity : expiredReservations) {
+                cancelReservation(reservationEntity);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

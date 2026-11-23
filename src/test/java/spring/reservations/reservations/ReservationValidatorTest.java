@@ -13,8 +13,8 @@ class ReservationValidatorTest {
     @Test
     void shouldRejectEndDateBeforeStartDate() {
         LocalDate startDate = LocalDate.now().plusDays(10);
-        Reservation reservation = new Reservation(
-                null, 1001L, 21L, startDate, startDate.minusDays(1), null
+        ReservationCreateRequestDTO reservation = new ReservationCreateRequestDTO(
+                1001L, 21L, startDate, startDate.minusDays(1)
         );
 
         assertThatThrownBy(() -> validator.validate(reservation))

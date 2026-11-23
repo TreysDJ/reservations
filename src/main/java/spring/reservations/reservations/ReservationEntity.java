@@ -3,6 +3,7 @@ package spring.reservations.reservations;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 @Table(name = "reservations")
@@ -29,7 +30,7 @@ public class ReservationEntity {
     private ReservationStatus status;
 
     @Column(name = "time_for_payment")
-    private ZonedDateTime timeForPayment;
+    private Instant timeForPayment;
 
     @Version
     @Column(name = "reservation_version")
@@ -96,11 +97,11 @@ public class ReservationEntity {
         this.status = status;
     }
 
-    public ZonedDateTime getTimeForPayment() {
+    public Instant getTimeForPayment() {
         return timeForPayment;
     }
 
-    public void setTimeForPayment(ZonedDateTime now) {
+    public void setTimeForPayment(Instant now) {
         this.timeForPayment = now;
     }
 }

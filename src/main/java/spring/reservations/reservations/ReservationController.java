@@ -7,20 +7,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
-    private final ReservationValidator reservationValidator;
     private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
 
     public ReservationController(@Nonnull ReservationService reservationService,
                                  @Nonnull ReservationValidator reservationValidator
     ) {
         this.reservationService = reservationService;
-        this.reservationValidator = reservationValidator;
     }
 
     @GetMapping("/{id}")
@@ -50,25 +50,24 @@ public class ReservationController {
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<Room>> getAllRooms() {
+    public ResponseEntity<List<Long>> getAllRooms() {
         log.info("Called getAllRooms");
         return ResponseEntity.ok(reservationService.getAllRooms());
     }
 
     @GetMapping("/my/reservations")
-    public ResponseEntity<List<Reservation>> getMyReservations(@RequestParam(name = "userId") Long userId) {
+    public ResponseEntity<List<Long>> getMyReservations(@RequestParam(name = "userId") Long userId) {
         log.info("called getMyReservations");
         return ResponseEntity.ok(reservationService.getMyReservations(userId));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Reservation> createReservation(
-            @Nonnull @RequestBody Reservation reservationToCreate
+    public ResponseEntity<ReservationCreateResponseDTO> createReservation(
+            @Nonnull @RequestBody ReservationCreateRequestDTO requestDTO
     ) {
-        reservationValidator.validate(reservationToCreate);
         log.info("Called createReservation");
         return ResponseEntity.status(201)
-                .body(reservationService.createReservation(reservationToCreate));
+                .body(toResponse(reservationService.createReservation(requestDTO)));
     }
 
     @DeleteMapping("/{id}/cancel")
@@ -87,5 +86,16 @@ public class ReservationController {
         log.info("Called approveReservation: id={}", id);
         Reservation reservation = reservationService.approveReservation(id);
         return ResponseEntity.ok(reservation);
+    }
+
+    private ReservationCreateResponseDTO toResponse(Reservation reservation) {
+        return new ReservationCreateResponseDTO(
+                reservation.id(),
+                reservation.userId(),
+                reservation.roomId(),
+                reservation.startDate(),
+                reservation.endDate(),
+                reservation.status()
+        );
     }
 }
