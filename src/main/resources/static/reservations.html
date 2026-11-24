@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Baltika Hotel»</title>
     <link rel="stylesheet" href="css/reservationsStyle.css">
+    <script src="js/reservations.js" defer></script>
 </head>
 <body>
 <div class="top-bar">
@@ -31,14 +32,18 @@
 
 <main>
     <h1>МОИ РЕЗЕРВАЦИИ</h1>
-    <div class="reservations-container">
+    <p id="reservations-message" role="status">Загрузка...</p>
+    <div class="reservations-container"></div>
+
+    <!-- Заготовка карточки. JavaScript сможет копировать ее для каждого бронирования. -->
+    <template id="reservation-template">
         <div class="reservation-card">
-            <img src="images/room5.webp" alt="Премиум-люкс" class="res-img">
+            <img src="images/room5.webp" alt="Номер отеля" class="res-img">
 
             <div class="res-details">
-                <h2>ПРЕМИУМ ЛЮКС</h2>
-                <p class="res-dates">17.11.2026 - 22.11.2026</p>
-                <p class="res-status">Статус: Подтверждено</p>
+                <h2 class="res-title"></h2>
+                <p class="res-dates"></p>
+                <p class="res-status"></p>
             </div>
 
             <div class="res-actions">
@@ -46,21 +51,7 @@
                 <button class="res-cancel">ОТМЕНИТЬ</button>
             </div>
         </div>
-        <div class="reservation-card">
-            <img src="images/room5.webp" alt="Премиум-люкс" class="res-img">
-
-            <div class="res-details">
-                <h2>СТАНДАРТ</h2>
-                <p class="res-dates">19.11.2026 - 27.11.2026</p>
-                <p class="res-status">Статус: Ожидает подтверждения</p>
-            </div>
-
-            <div class="res-actions">
-                <button class="res-approve">ПОДТВЕРДИТЬ</button>
-                <button class="res-cancel">ОТМЕНИТЬ</button>
-            </div>
-        </div>
-    </div>
+    </template>
 </main>
 </body>
 </html>
