@@ -1,6 +1,6 @@
 body {
     background-color: #1a1a1a;
-        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("images/room4.webp");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/room5.webp");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -10,13 +10,12 @@ body {
 }
 
 h1 {
-    justify-content: center;
+    text-align: center;
     font-family: serif;
     font-size: 64px;
     color: #D1A254;
     border-bottom: 1px solid #D1A254;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 main {
@@ -25,13 +24,6 @@ main {
     justify-content: center;
     align-items: center;
     position: relative;
-}
-
-input {
-    background-color: #D1A254;
-    border: 1px solid black;
-    height: 72px;
-    font-size: 32px;
 }
 
 .address {
@@ -53,7 +45,33 @@ input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 24px 0 0px;
+    padding: 4px 24px 0 0;
+}
+
+.logo-left {
+    display: flex;
+}
+
+.address {
+    margin-top: 3px;
+    margin-left: 6px;
+    color: #3b3838;
+    text-decoration: none;
+}
+
+.top-bar {
+    background-color: black;
+    font-size: 12px;
+    border-bottom: 1px solid #3b3838;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 24px 0 0;
 }
 
 .logo-left {
@@ -64,18 +82,6 @@ input {
     display: flex;
     flex-direction: column;
 }
-.nav-rooms-btn {
-    border: 2px solid #D1A254;
-    color: #D1A254;
-    text-decoration: none;
-    font-family: serif;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 8px 24px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
 .nav-main-btn {
     border: 2px solid #D1A254;
     color: #D1A254;
@@ -88,12 +94,24 @@ input {
     cursor: pointer;
 }
 
-.nav-rooms-btn:hover {
+.nav-reservations-btn {
+    border: 2px solid #D1A254;
+    color: #D1A254;
+    text-decoration: none;
+    font-family: serif;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 24px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-main-btn:hover {
     background-color: #D1A254;
     color: black;
 }
 
-.nav-main-btn:hover {
+.nav-reservations-btn:hover {
     background-color: #D1A254;
     color: black;
 }
@@ -123,87 +141,64 @@ input {
     margin: 0;
 }
 
-.reservations-container {
+.rooms-gallery {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    margin-top: 40px;
-}
-
-.reservation-card {
-    display: flex;
-    align-items: center;
-    background-color: rgba(43, 43, 43, 0.85);
-    border: 1px solid #D1A254;
-    width: 70%;
-    max-width: 900px;
-    padding: 20px;
     gap: 30px;
+    overflow-x: auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 1200px;
+    scroll-snap-type: x mandatory;
 }
 
-.res-img {
-    width: 200px;
-    height: 120px;
+.rooms-gallery::-webkit-scrollbar {
+    display: none;
+}
+
+.rooms-gallery {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.room-card {
+    flex: 0 0 auto;
+    width: 350px;
+    background-color: #2b2b2b;
+    border: 2px solid #D1A254;
+    padding: 20px;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    text-align: center;
+}
+
+.room-img {
+    width: 100%;
+    height: 200px;
     object-fit: cover;
+    margin-bottom: 15px;
 }
 
-.res-details {
-    flex-grow: 1;
-    text-align: left;
-}
-
-.res-details h2 {
+.room-card h3 {
     color: #D1A254;
     font-family: serif;
-    margin: 0 0 10px 0;
-    font-size: 24px;
+    margin: 10px 0;
 }
 
-.res-dates {
+.room-card p {
     color: white;
-    font-size: 16px;
-    margin: 0 0 10px 0;
+    font-family: sans-serif;
 }
 
-.res-status.pending {
-    color: #D1A254;
-}
-.res-status.approved {
-    color: #4CAF50;
-}
-
-.res-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.btn-approve {
+.book-btn {
     background-color: #D1A254;
     color: black;
     border: none;
     padding: 10px 20px;
-    font-family: serif;
+    font-size: 16px;
     font-weight: bold;
+    font-family: serif;
     cursor: pointer;
-    transition: background 0.2s;
-}
-.btn-approve:hover {
-    background-color: #b88a44;
+    margin-top: 10px;
+    width: 100%;
 }
 
-.btn-cancel {
-    background-color: transparent;
-    color: white;
-    border: 1px solid #D1A254;
-    padding: 10px 20px;
-    font-family: serif;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-cancel:hover {
-    background-color: #D1A254;
-    color: black;
-}
