@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Null;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public record ReservationCreateResponseDTO(
@@ -17,10 +18,10 @@ public record ReservationCreateResponseDTO(
         Long roomId,
 
         @Nonnull
-        ZonedDateTime startDate,
+        LocalDate startDate,
 
         @Nonnull
-        ZonedDateTime endDate,
+        LocalDate endDate,
 
         ReservationStatus status
 ) {

@@ -32,14 +32,7 @@ public class ReservationService {
     private final TransactionTemplate txRead;
     private final ReservationValidator reservationValidator;
 
-    public ReservationService(
-            @Nonnull ReservationRepository reservationRepository,
-            @Nonnull RoomRepository roomRepository,
-            @Nonnull ReservationMapper mapper,
-            @Nonnull ReservationAvaillabilityService availlabilityService,
-            @Nonnull PlatformTransactionManager txManager,
-            @Nonnull ReservationValidator reservationValidator
-    ) {
+    public ReservationService(@Nonnull ReservationRepository reservationRepository, @Nonnull RoomRepository roomRepository, @Nonnull ReservationMapper mapper, @Nonnull ReservationAvaillabilityService availlabilityService, @Nonnull PlatformTransactionManager txManager, @Nonnull ReservationValidator reservationValidator) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
         this.availlabilityService = availlabilityService;
@@ -51,10 +44,7 @@ public class ReservationService {
     }
 
     public Reservation getReservationById(@Nonnull Long id) {
-        ReservationEntity reservationEntity = txRead.execute(status ->
-                reservationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-                        "Not found reservation by id = " + id))
-        );
+        ReservationEntity reservationEntity = txRead.execute(status -> reservationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id)));
         return mapper.toDomain(reservationEntity);
     }
 
@@ -65,14 +55,9 @@ public class ReservationService {
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
 
         return txRead.execute(status -> {
-            List<ReservationEntity> allEntities = reservationRepository.findAllByFilter(
-                    filter.roomId(),
-                    filter.userId(),
-                    pageable
-            );
+            List<ReservationEntity> allEntities = reservationRepository.findAllByFilter(filter.roomId(), filter.userId(), pageable);
 
-            return allEntities.stream()
-                    .map(mapper::toDomain).toList();
+            return allEntities.stream().map(mapper::toDomain).toList();
         });
     }
 
@@ -83,33 +68,24 @@ public class ReservationService {
         });
     }
 
-    public List<Long> getMyReservations(@Nonnull Long id) {
+    public List<Reservation> getMyReservations(@Nonnull Long id) {
         return txRead.execute(status -> {
-            List<Long> allReservations = reservationRepository.findMyReservations(id);
+            List<Reservation> allReservations = reservationRepository.findMyReservations(id);
             return allReservations.stream().toList();
         });
     }
 
-    public Reservation createReservation(@Nonnull Long userId,
-                                         @Nonnull Long roomId,
-                                         @Nonnull LocalDate startDate,
-                                         @Nonnull LocalDate endDate) {
-        ZonedDateTime startDateZd = startDate
-                .atTime(HotelConstants.CHECK_IN_TIME)
-                .atZone(HotelConstants.HOTEL_ZONE);
+    public Reservation createReservation(
+            @Nonnull Long userId,
+            @Nonnull Long roomId,
+            @Nonnull LocalDate startDate,
+            @Nonnull LocalDate endDate
+    ) {
+        ZonedDateTime startDateZd = startDate.atTime(HotelConstants.CHECK_IN_TIME).atZone(HotelConstants.HOTEL_ZONE);
 
-        ZonedDateTime endDateZd = endDate
-                .atTime(HotelConstants.CHECK_OUT_TIME)
-                .atZone(HotelConstants.HOTEL_ZONE);
+        ZonedDateTime endDateZd = endDate.atTime(HotelConstants.CHECK_OUT_TIME).atZone(HotelConstants.HOTEL_ZONE);
 
-        Reservation reservationToCreate = new Reservation(
-                null,
-                userId,
-                roomId,
-                startDateZd,
-                endDateZd,
-                null
-        );
+        Reservation reservationToCreate = new Reservation(null, userId, roomId, startDateZd, endDateZd, null);
 
         reservationValidator.validate(reservationToCreate);
 
@@ -128,11 +104,7 @@ public class ReservationService {
                 throw new EntityNotFoundException("Not found roomEntity by id=" + reservationToCreate.roomId());
             }
 
-            boolean isConflict = availlabilityService.isReservationConflict(
-                    reservationToCreate.roomId(),
-                    reservationToCreate.startDate(),
-                    reservationToCreate.endDate()
-            );
+            boolean isConflict = availlabilityService.isReservationConflict(reservationToCreate.roomId(), reservationToCreate.startDate(), reservationToCreate.endDate());
 
             if (isConflict) {
                 throw new IllegalArgumentException("Cannot create reservation: RoomEntity ID or Date is incorrect");
@@ -149,8 +121,7 @@ public class ReservationService {
 
     public void cancelReservation(@Nonnull Long id) {
         tx.executeWithoutResult(status -> {
-            ReservationEntity reservationEntity = reservationRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
+            ReservationEntity reservationEntity = reservationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
 
             if (reservationEntity.getStatus().equals(ReservationStatus.APPROVED)) {
                 throw new IllegalArgumentException("Cannot cancel reservation: status=APPROVED");
@@ -168,8 +139,7 @@ public class ReservationService {
 
     public Reservation approveReservation(@Nonnull Long id) {
         return tx.execute(status -> {
-            ReservationEntity reservationEntity = reservationRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
+            ReservationEntity reservationEntity = reservationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Reservation with id=" + id + " not found"));
 
             if (reservationEntity.getStatus() == ReservationStatus.APPROVED) {
                 return mapper.toDomain(reservationEntity);
@@ -185,10 +155,7 @@ public class ReservationService {
     }
 
     public void cancelExpiredReservations() {
-        List<Long> expiredReservations = reservationRepository.findExpiredReservations(
-                Instant.now(),
-                ReservationStatus.PENDING
-        );
+        List<Long> expiredReservations = reservationRepository.findExpiredReservations(Instant.now(), ReservationStatus.PENDING);
 
         try {
             for (Long reservationEntity : expiredReservations) {

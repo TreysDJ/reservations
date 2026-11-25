@@ -175,6 +175,7 @@ input {
 .res-status.pending {
     color: #D1A254;
 }
+
 .res-status.approved {
     color: #4CAF50;
 }

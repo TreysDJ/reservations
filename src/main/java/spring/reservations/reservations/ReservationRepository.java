@@ -40,10 +40,10 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     );
 
     @Query("""
-            SELECT r.roomId FROM ReservationEntity r
+            SELECT r FROM ReservationEntity r
             WHERE r.userId = :userId
             """)
-    List<Long> findMyReservations(
+    List<Reservation> findMyReservations(
             @Nonnull @Param("userId") Long userId
     );
 

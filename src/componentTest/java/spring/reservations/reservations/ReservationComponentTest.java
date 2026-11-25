@@ -96,7 +96,12 @@ class ReservationComponentTest extends BaseComponentTest {
 
         ReservationCreateRequestDTO request = new ReservationCreateRequestDTO(1001L, nextRoomNumber(), startDate, endDate);
 
-        assertThatThrownBy(() -> reservationService.createReservation(request))
+        assertThatThrownBy(() -> reservationService.createReservation(
+                request.userId(),
+                request.roomId(),
+                request.startDate(),
+                request.endDate()
+        ))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Start date must be earlier than end date");
 
@@ -190,8 +195,7 @@ class ReservationComponentTest extends BaseComponentTest {
     }
 
     private Reservation createReservation(long userId, long roomId, LocalDate startDate, LocalDate endDate) {
-        ReservationCreateRequestDTO requestDTO = new ReservationCreateRequestDTO(userId, roomId, startDate, endDate);
-        return reservationService.createReservation(requestDTO);
+        return reservationService.createReservation(userId, roomId, startDate, endDate);
     }
 
     private RoomEntity createRoom(long roomNumber) {
