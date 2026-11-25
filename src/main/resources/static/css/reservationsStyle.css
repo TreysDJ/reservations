@@ -140,8 +140,9 @@ input {
 .reservation-card {
     display: flex;
     align-items: center;
-    background-color: rgba(43, 43, 43, 0.85);
+    background-color: rgba(30, 30, 30, 0.85);
     border: 1px solid #D1A254;
+    border-radius: 6px;
     width: 70%;
     max-width: 900px;
     padding: 20px;
@@ -152,6 +153,7 @@ input {
     width: 200px;
     height: 120px;
     object-fit: cover;
+    border-radius: 4px;
 }
 
 .res-details {
@@ -162,30 +164,64 @@ input {
 .res-details h2 {
     color: #D1A254;
     font-family: serif;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
     font-size: 24px;
 }
 
 .res-dates {
-    color: white;
+    color: #fff;
     font-size: 16px;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
 }
 
-.res-status.pending {
-    color: #D1A254;
+.res-status {
+    color: #aaa;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
 }
 
-.res-status.approved {
-    color: #4CAF50;
-}
+.res-status.pending { color: #D1A254; }
+.res-status.approved { color: #4CAF50; }
+.res-status.cancelled { color: #e55353; }
 
 .res-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
+.res-actions button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.res-approve {
+    background-color: #D1A254;
+    color: #1a1a1a;
+    border: 1px solid #D1A254;
+}
+
+.res-approve:hover {
+    background-color: #e2b66a;
+}
+
+.res-cancel {
+    background-color: transparent;
+    color: #ccc;
+    border: 1px solid #666;
+}
+
+.res-cancel:hover {
+    border-color: #e55353;
+    color: #e55353;
+}
 .btn-approve {
     background-color: #D1A254;
     color: black;
