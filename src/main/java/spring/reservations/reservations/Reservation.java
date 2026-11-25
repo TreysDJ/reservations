@@ -18,11 +18,9 @@ record Reservation (
         Long roomId,
 
         @Nonnull
-        @FutureOrPresent
         ZonedDateTime startDate,
 
         @Nonnull
-        @FutureOrPresent
         ZonedDateTime endDate,
 
         ReservationStatus status

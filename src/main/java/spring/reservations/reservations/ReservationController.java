@@ -67,7 +67,12 @@ public class ReservationController {
     ) {
         log.info("Called createReservation");
         return ResponseEntity.status(201)
-                .body(toResponse(reservationService.createReservation(requestDTO)));
+                .body(toResponse(reservationService.createReservation(
+                        requestDTO.userId(),
+                        requestDTO.roomId(),
+                        requestDTO.startDate(),
+                        requestDTO.endDate()
+                )));
     }
 
     @DeleteMapping("/{id}/cancel")

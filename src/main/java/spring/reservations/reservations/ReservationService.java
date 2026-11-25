@@ -11,6 +11,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import spring.reservations.reservations.availability.ReservationAvaillabilityService;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -89,19 +90,22 @@ public class ReservationService {
         });
     }
 
-    public Reservation createReservation(@Nonnull ReservationCreateRequestDTO requestDTO) {
-        ZonedDateTime startDateZd = requestDTO.startDate()
+    public Reservation createReservation(@Nonnull Long userId,
+                                         @Nonnull Long roomId,
+                                         @Nonnull LocalDate startDate,
+                                         @Nonnull LocalDate endDate) {
+        ZonedDateTime startDateZd = startDate
                 .atTime(HotelConstants.CHECK_IN_TIME)
                 .atZone(HotelConstants.HOTEL_ZONE);
 
-        ZonedDateTime endDateZd = requestDTO.endDate()
+        ZonedDateTime endDateZd = endDate
                 .atTime(HotelConstants.CHECK_OUT_TIME)
                 .atZone(HotelConstants.HOTEL_ZONE);
 
         Reservation reservationToCreate = new Reservation(
                 null,
-                requestDTO.userId(),
-                requestDTO.roomId(),
+                userId,
+                roomId,
                 startDateZd,
                 endDateZd,
                 null
