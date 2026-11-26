@@ -27,8 +27,6 @@
         <a href="rooms.html" class="nav-rooms-btn">КОМНАТЫ</a>
         <a href="reservations.html" class="nav-reservations-btn">МОИ РЕЗЕРВАЦИИ</a>
     </div>
-
-
 </div>
 
 <main>
@@ -44,9 +42,16 @@
                 <p>ДО</p>
                 <input type="date" name="date-to" required>
             </div>
-            <button type="submit" class="submit-btn">НАЙТИ</button>
+
+            <div class="room">
+                <p>НОМЕР</p>
+                <input type="number" name="room-id" min="1" placeholder="101" required>
+            </div>
+
+            <button class="submit-btn">НАЙТИ</button>
         </div>
     </form>
 </main>
+<script src="js/create.js"></script>
 </body>
 </html>

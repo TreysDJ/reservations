@@ -199,6 +199,6 @@ class ReservationComponentTest extends BaseComponentTest {
     }
 
     private RoomEntity createRoom(long roomNumber) {
-        return roomRepository.save(new RoomEntity(null, roomNumber));
+        return roomRepository.save(new RoomEntity(null, roomNumber, "Люкс", "."));
     }
 }

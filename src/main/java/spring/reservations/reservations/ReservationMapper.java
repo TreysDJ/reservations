@@ -32,14 +32,18 @@ public class ReservationMapper {
     public Room toDomain(@Nonnull RoomEntity room) {
         return new Room(
                 room.getId(),
-                room.getRoomId()
+                room.getRoomId(),
+                room.getTitle(),
+                room.getImg()
         );
     }
 
     public RoomEntity toEntity(@Nonnull Room room) {
         return new RoomEntity(
                 room.id(),
-                room.roomId()
+                room.roomId(),
+                room.title(),
+                room.img()
         );
     }
 }

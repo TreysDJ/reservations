@@ -42,9 +42,11 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     @Query("""
             SELECT r FROM ReservationEntity r
             WHERE r.userId = :userId
+            AND r.status != :status
             """)
     List<Reservation> findMyReservations(
-            @Nonnull @Param("userId") Long userId
+            @Nonnull @Param("userId") Long userId,
+            @Nonnull @Param("status") ReservationStatus status
     );
 
     @Query("""

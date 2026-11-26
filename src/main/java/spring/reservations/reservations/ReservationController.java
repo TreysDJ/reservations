@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservation")
 public class ReservationController {
     private final ReservationService reservationService;
     private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
@@ -21,16 +20,16 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/reservation/{id}")
     public ResponseEntity<ReservationGetResponseDTO> getReservationById(@Nonnull @PathVariable("id") Long id) {
         log.info("Called getReservationById: {}", id);
 
         Reservation reservation = reservationService.getReservationById(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(toGetResponse(reservation));
+                .body(toReservationGetResponse(reservation));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/reservation/list")
     public ResponseEntity<List<ReservationGetResponseDTO>> getAllReservations(
             @RequestParam(name = "userId", required = false) Long userId,
             @RequestParam(name = "roomId", required = false) Long roomId,
@@ -45,31 +44,33 @@ public class ReservationController {
                 pageNumber
         );
         return ResponseEntity.ok(
-                reservationService.findAllByFilter(filter).stream().map(this::toGetResponse).toList()
+                reservationService.findAllByFilter(filter).stream().map(this::toReservationGetResponse).toList()
         );
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<Long>> getAllRooms() {
+    public ResponseEntity<List<RoomGetResponseDTO>> getAllRooms() {
         log.info("Called getAllRooms");
-        return ResponseEntity.ok(reservationService.getAllRooms());
-    }
-
-    @GetMapping("/list/{userId}")
-    public ResponseEntity<List<ReservationGetResponseDTO>> getMyReservations(@PathVariable(name = "userId") Long userId) {
-        log.info("called getMyReservations");
         return ResponseEntity.ok(
-                reservationService.getMyReservations(userId).stream().map(this::toGetResponse).toList()
+                reservationService.getAllRooms().stream().map(this::toRoomGetResponse).toList()
         );
     }
 
-    @PostMapping("/create")
+    @GetMapping("/reservation/list/{userId}")
+    public ResponseEntity<List<ReservationGetResponseDTO>> getMyReservations(@PathVariable(name = "userId") Long userId) {
+        log.info("called getMyReservations");
+        return ResponseEntity.ok(
+                reservationService.getMyReservations(userId).stream().map(this::toReservationGetResponse).toList()
+        );
+    }
+
+    @PostMapping("/reservation/create")
     public ResponseEntity<ReservationCreateResponseDTO> createReservation(
             @Nonnull @RequestBody ReservationCreateRequestDTO requestDTO
     ) {
         log.info("Called createReservation");
         return ResponseEntity.status(201)
-                .body(toCreateResponse(reservationService.createReservation(
+                .body(toReservationCreateResponse(reservationService.createReservation(
                         requestDTO.userId(),
                         requestDTO.roomId(),
                         requestDTO.startDate(),
@@ -77,7 +78,7 @@ public class ReservationController {
                 )));
     }
 
-    @DeleteMapping("/{id}/cancel")
+    @DeleteMapping("/reservation/{id}/cancel")
     public ResponseEntity<Void> deleteReservation(
             @Nonnull @PathVariable("id") Long id
     ) {
@@ -86,16 +87,16 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/approve")
+    @PostMapping("/reservation/{id}/approve")
     public ResponseEntity<ReservationGetResponseDTO> approveReservation(
             @Nonnull @PathVariable("id") Long id
     ) {
         log.info("Called approveReservation: id={}", id);
         Reservation reservation = reservationService.approveReservation(id);
-        return ResponseEntity.ok(toGetResponse(reservation));
+        return ResponseEntity.ok(toReservationGetResponse(reservation));
     }
 
-    private ReservationCreateResponseDTO toCreateResponse(Reservation reservation) {
+    private ReservationCreateResponseDTO toReservationCreateResponse(Reservation reservation) {
         return new ReservationCreateResponseDTO(
                 reservation.id(),
                 reservation.userId(),
@@ -106,12 +107,21 @@ public class ReservationController {
         );
     }
 
-    private ReservationGetResponseDTO toGetResponse(Reservation reservation) {
+    private ReservationGetResponseDTO toReservationGetResponse(Reservation reservation) {
         return new ReservationGetResponseDTO(
+                reservation.id(),
                 reservation.roomId(),
                 reservation.startDate().toLocalDate(),
                 reservation.endDate().toLocalDate(),
                 reservation.status()
+        );
+    }
+
+    private RoomGetResponseDTO toRoomGetResponse(Room room) {
+        return new RoomGetResponseDTO(
+                room.roomId(),
+                room.title(),
+                room.img()
         );
     }
 }

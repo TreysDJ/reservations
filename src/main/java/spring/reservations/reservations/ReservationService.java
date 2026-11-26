@@ -61,16 +61,16 @@ public class ReservationService {
         });
     }
 
-    public List<Long> getAllRooms() {
+    public List<Room> getAllRooms() {
         return txRead.execute(status -> {
-            List<Long> allRoomEntities = roomRepository.findAllRooms();
+            List<Room> allRoomEntities = roomRepository.findAllRooms();
             return allRoomEntities.stream().toList();
         });
     }
 
     public List<Reservation> getMyReservations(@Nonnull Long id) {
         return txRead.execute(status -> {
-            List<Reservation> allReservations = reservationRepository.findMyReservations(id);
+            List<Reservation> allReservations = reservationRepository.findMyReservations(id, ReservationStatus.CANCELLED);
             return allReservations.stream().toList();
         });
     }

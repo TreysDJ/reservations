@@ -20,7 +20,7 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
     );
 
     @Query("""
-            SELECT r.roomId FROM RoomEntity r
+            SELECT r FROM RoomEntity r
             """)
-    List<Long> findAllRooms();
+    List<Room> findAllRooms();
 }

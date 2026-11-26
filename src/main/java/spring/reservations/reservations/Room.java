@@ -8,7 +8,11 @@ record Room(
         Long id,
 
         @Nonnull
-        Long roomId
+        Long roomId,
+
+        @Nonnull String title,
+
+        @Nonnull String img
 ) {
 
 }

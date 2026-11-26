@@ -128,18 +128,25 @@ input {
     gap: 20px;
 }
 
-.from, .to {
+.from, .to, .room {
     display: flex;
     flex-direction: row;
     align-items: center;
-    flex: 1;
     height: 60px;
     border: 2px solid black;
     background-color: #D1A254;
     box-sizing: border-box;
 }
 
-.from p, .to p {
+.from, .to {
+    flex: 1;
+}
+
+.room {
+    flex: 0 0 auto;
+}
+
+.from p, .to p, .room p {
     margin: 0 0 0 16px;
     font-size: 32px;
     font-weight: bold;
@@ -147,13 +154,32 @@ input {
     color: black;
 }
 
-.from input, .to input {
+.from input, .to input, .room input {
     border: none;
     background: none;
     padding: 10px;
     font-family: serif;
     font-size: 20px;
+    color: black;
     outline: none;
+}
+
+.room input {
+    width: 75px;
+}
+
+.room input::placeholder {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.room input::-webkit-outer-spin-button,
+.room input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.room input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .submit-btn {
@@ -161,7 +187,6 @@ input {
     font-size: 32px;
     font-weight: bold;
     font-family: serif;
-    border: none;
     height: 60px;
     border: 2px solid black;
     margin-right: 10px;

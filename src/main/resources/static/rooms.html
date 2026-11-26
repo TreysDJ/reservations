@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Baltika rooms</title>
-    <link rel="stylesheet" href="css/roomStyle.css">
+    <link rel="stylesheet" href="css/roomsStyle.css">
 </head>
 
 <body>
@@ -28,30 +28,69 @@
         <a href="reservations.html" class="nav-reservations-btn">МОИ РЕЗЕРВАЦИИ</a>
     </div>
 </div>
-</body>
+
 <main>
     <h1>КОМНАТЫ</h1>
-    <div class="rooms-gallery">
-        <div class="room-card">
-            <img src="images/room1.webp" alt="Комната 1" class="room-img">
-            <h3>СТАНДАРТ</h3>
-            <p>Уютный номер с видом на город.</p>
-            <button class="book-btn">ВЫБРАТЬ</button>
-        </div>
-
-        <div class="room-card">
-            <img src="images/room2.webp" alt="Комната 2" class="room-img">
-            <h3>ПОЛУЛЮКС</h3>
-            <p>Хорошие соседи и свежий воздух.</p>
-            <button class="book-btn">ВЫБРАТЬ</button>
-        </div>
-
-        <div class="room-card">
-            <img src="images/room3.webp" alt="Комната 3" class="room-img">
-            <h3>ЛЮКС</h3>
-            <p>Премиум номер с панорамными окнами.</p>
-            <button class="book-btn">ВЫБРАТЬ</button>
-        </div>
+    <div class="gallery-wrapper">
+        <button class="scroll-btn prev-btn" aria-label="Предыдущая комната">&#10094;</button>
+        <div class="rooms-gallery"></div>
+        <button class="scroll-btn next-btn" aria-label="Следующая комната">&#10095;</button>
     </div>
+
+    <template id="room-template">
+        <div class="room-card">
+            <img src="" alt="" class="room-img">
+            <h3></h3>
+            <a href="hotel.html" class="book-btn">ВЫБРАТЬ</a>
+        </div>
+    </template>
 </main>
+<script>
+    const gallery = document.querySelector('.rooms-gallery');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const scrollStep = 380;
+
+    function updateScrollButtons() {
+        const maxScrollLeft = gallery.scrollWidth - gallery.clientWidth;
+
+        if (maxScrollLeft <= 5) {
+            prevBtn.style.visibility = 'hidden';
+            nextBtn.style.visibility = 'hidden';
+            return;
+        }
+
+        prevBtn.style.visibility = 'visible';
+        nextBtn.style.visibility = 'visible';
+        prevBtn.disabled = gallery.scrollLeft <= 5;
+        nextBtn.disabled = gallery.scrollLeft >= maxScrollLeft - 5;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        gallery.scrollBy({left: -scrollStep, behavior: 'smooth'});
+    });
+
+    nextBtn.addEventListener('click', () => {
+        gallery.scrollBy({left: scrollStep, behavior: 'smooth'});
+    });
+
+    gallery.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+            e.preventDefault();
+            gallery.scrollBy({
+                left: e.deltaY > 0 ? scrollStep : -scrollStep,
+                behavior: 'smooth'
+            });
+        }
+    }, {passive: false});
+
+    gallery.addEventListener('scroll', updateScrollButtons);
+    window.addEventListener('resize', updateScrollButtons);
+
+    new MutationObserver(updateScrollButtons).observe(gallery, {childList: true});
+
+    updateScrollButtons();
+</script>
+<script src="js/rooms.js"></script>
+</body>
 </html>
