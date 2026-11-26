@@ -1,0 +1,257 @@
+body {
+    background-color: #1a1a1a;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/room4.webp");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+h1 {
+    justify-content: center;
+    font-family: serif;
+    font-size: 64px;
+    color: #D1A254;
+    border-bottom: 1px solid #D1A254;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+input {
+    background-color: #D1A254;
+    border: 1px solid black;
+    height: 72px;
+    font-size: 32px;
+}
+
+.address {
+    margin-top: 3px;
+    margin-left: 6px;
+    color: #3b3838;
+    text-decoration: none;
+}
+
+.top-bar {
+    background-color: black;
+    font-size: 12px;
+    border-bottom: 1px solid #3b3838;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 24px 0 0px;
+}
+
+.logo-left {
+    display: flex;
+}
+
+.nav-hotel {
+    display: flex;
+    flex-direction: column;
+}
+.nav-rooms-btn {
+    border: 2px solid #D1A254;
+    color: #D1A254;
+    text-decoration: none;
+    font-family: serif;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 24px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-main-btn {
+    border: 2px solid #D1A254;
+    color: #D1A254;
+    text-decoration: none;
+    font-family: serif;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 24px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-rooms-btn:hover {
+    background-color: #D1A254;
+    color: black;
+}
+
+.nav-main-btn:hover {
+    background-color: #D1A254;
+    color: black;
+}
+
+.logo-img {
+    width: 70px;
+    height: 50px;
+    margin-left: 14px;
+    margin-top: 10px;
+}
+
+.logo-text {
+    margin-top: 16px;
+    margin-left: 12px;
+    margin-bottom: 0;
+    font-family: serif;
+    font-size: 18px;
+    color: #D1A254;
+}
+
+.logo-name {
+    margin: 0;
+    text-align: center;
+}
+
+.logo-dsc {
+    margin: 0;
+}
+
+#reservations-message {
+    color: white;
+    font-size: 16px;
+}
+
+.reservations-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.reservation-card {
+    display: flex;
+    align-items: center;
+    background-color: rgba(30, 30, 30, 0.85);
+    border: 1px solid #D1A254;
+    border-radius: 6px;
+    width: 70%;
+    max-width: 900px;
+    padding: 20px;
+    gap: 30px;
+}
+
+.res-img {
+    width: 200px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.res-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.res-details h2 {
+    color: #D1A254;
+    font-family: serif;
+    margin: 0 0 8px 0;
+    font-size: 24px;
+}
+
+.res-dates {
+    display: inline-block;
+    color: #aaa;
+    background: rgba(255, 255, 255, 0.06);
+    border-left: 2px solid #D1A254;
+    padding: 5px 12px;
+    border-radius: 3px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px 0;
+}
+
+.res-status {
+    color: #aaa;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.res-status.pending { color: #D1A254; }
+.res-status.approved { color: #4CAF50; }
+.res-status.cancelled { color: #e55353; }
+
+.res-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.res-actions button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.res-approve {
+    background-color: #D1A254;
+    color: #1a1a1a;
+    border: 1px solid #D1A254;
+}
+
+.res-approve:hover {
+    background-color: #e2b66a;
+}
+
+.res-cancel {
+    background-color: transparent;
+    color: #ccc;
+    border: 1px solid #666;
+}
+
+.res-cancel:hover {
+    border-color: #e55353;
+    color: #e55353;
+}
+.btn-approve {
+    background-color: #D1A254;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    font-family: serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-approve:hover {
+    background-color: #b88a44;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #D1A254;
+    padding: 10px 20px;
+    font-family: serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-cancel:hover {
+    background-color: #D1A254;
+    color: black;
+}

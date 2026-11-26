@@ -1,0 +1,17 @@
+INSERT INTO rooms (room_id, title, img)
+VALUES ('21', 'СТАНДАРТ', 'images/room1.webp'),
+       ('22', 'СТАНДАРТ ПЛЮС', 'images/room2.webp'),
+       ('23', 'СТАНДАРТ TWIN', 'images/room3.webp'),
+       ('24', 'СУПЕРИОР', 'images/room4.webp'),
+       ('31', 'КОМФОРТ', 'images/room5.webp'),
+       ('32', 'КОМФОРТ ПЛЮС', 'images/room6.webp'),
+       ('33', 'БИЗНЕС', 'images/room7.webp'),
+       ('34', 'СТУДИЯ', 'images/room8.webp'),
+       ('41', 'ДЕЛЮКС', 'images/room9.webp'),
+       ('42', 'ПРЕМИУМ', 'images/room10.webp'),
+       ('43', 'ПОЛУЛЮКС', 'images/room11.webp'),
+       ('44', 'ЛЮКС', 'images/room12.webp'),
+       ('51', 'СЕМЕЙНЫЙ ЛЮКС', 'images/room13.webp'),
+       ('52', 'ПАНОРАМНЫЙ ЛЮКС', 'images/room14.webp'),
+       ('53', 'ПРЕДСТАВИТЕЛЬСКИЙ ЛЮКС', 'images/room15.webp'),
+       ('54', 'ПРЕЗИДЕНТСКИЙ ЛЮКС', 'images/room16.webp');
